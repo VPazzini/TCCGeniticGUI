@@ -1,0 +1,12 @@
+/bin/
+/build/
+/nbproject/
+*.jar
+*.war
+*.ear
+*.fasta
+*.fsa
+*.txt
+/input/
+/output/
+*.fasta
