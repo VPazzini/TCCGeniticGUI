@@ -373,7 +373,7 @@ public class MainWindow extends javax.swing.JFrame {
     public void finished() {
         //JOptionPane.showMessageDialog(this, "Computation Finished");
 
-        File f = new File(jTextFieldFilePath.getText());
+        File f = new File(jTextFieldFilePath.getText().split(";")[0]);
         String path = (new File("")).getAbsoluteFile() + "/output/" + f.getName() + "/";
         File newDir = new File(path);
         if (!newDir.exists()) {
