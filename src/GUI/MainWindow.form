@@ -127,8 +127,8 @@
                                       <Component id="jLabelGeneration" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
-                              <Component id="jButton1" alignment="1" min="-2" pref="145" max="-2" attributes="0"/>
-                              <Component id="jButton2" alignment="1" min="-2" pref="145" max="-2" attributes="0"/>
+                              <Component id="jButtonFastaFile" alignment="1" min="-2" pref="145" max="-2" attributes="0"/>
+                              <Component id="jButtonMotifFile" alignment="1" min="-2" pref="145" max="-2" attributes="0"/>
                               <Component id="jButtonRun" alignment="1" min="-2" pref="146" max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -168,12 +168,12 @@
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jTextFieldFilePath" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jButtonFastaFile" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jTextFieldMotifFilePath" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jButton2" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jButtonMotifFile" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
@@ -304,12 +304,12 @@
         </Component>
         <Component class="javax.swing.JTextField" name="jTextFieldFilePath">
         </Component>
-        <Component class="javax.swing.JButton" name="jButton1">
+        <Component class="javax.swing.JButton" name="jButtonFastaFile">
           <Properties>
             <Property name="text" type="java.lang.String" value="FASTA File"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonFastaFileActionPerformed"/>
           </Events>
         </Component>
         <Container class="javax.swing.JScrollPane" name="jScrollPane1">
@@ -381,12 +381,12 @@
         </Component>
         <Component class="javax.swing.JTextField" name="jTextFieldMotifFilePath">
         </Component>
-        <Component class="javax.swing.JButton" name="jButton2">
+        <Component class="javax.swing.JButton" name="jButtonMotifFile">
           <Properties>
             <Property name="text" type="java.lang.String" value="Motifs File"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton2ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonMotifFileActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

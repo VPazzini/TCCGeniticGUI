@@ -7,12 +7,21 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
 public class Genetic implements Runnable {
 
     private final ArrayList<Sequence> sequences = new ArrayList<>();
     private final Population population;
     private int gen;
+    private int maxGens;
+    private int size;
+    private int motifSize;
+    private double survivors;
+    private int selectionMethod;
+    private MainWindow window;
+    private Selection select;
+    private CrossOver crossOver;
 
     public Genetic() {
         this.population = Population.getInstance();
@@ -65,7 +74,15 @@ public class Genetic implements Runnable {
             BufferedReader input = new BufferedReader(fw);
             String line;
             while ((line = input.readLine()) != null) {
-                if (line.length() > 0) {
+                String inputSeq = line.trim();
+                if (inputSeq.length() > 0) {
+                    
+                    if(inputSeq.length() != motifSize){
+                        JOptionPane.showMessageDialog(window, "Sequences in the motif file doesn't match the "
+                                + "selected size on parameters.");
+                        
+                        return inputPopulation;
+                    }
                     inputPopulation.add(new Individual(line.trim()));
                 }
             }
@@ -100,15 +117,6 @@ public class Genetic implements Runnable {
         return sequences;
     }
 
-    private int maxGens;
-    private int size;
-    private int motifSize;
-    private double survivors;
-    private int selectionMethod;
-    private MainWindow window;
-    private Selection select;
-    private CrossOver crossOver;
-
     public void setUp(int maxGens, int size, int motifSize, int generateMethod, String pathToInputFile,
             double survivors, int selectionMethod, MainWindow window) {
         this.maxGens = maxGens;
@@ -131,10 +139,17 @@ public class Genetic implements Runnable {
             }
         }
         if (!pathToInputFile.equals("")) {
-            population.getPopulation().addAll(readPopulationFile(pathToInputFile));
+            if(new File(pathToInputFile).exists()){
+                population.getPopulation().addAll(readPopulationFile(pathToInputFile));
+            }else{
+                for(String s:pathToInputFile.split(";")){
+                    if(s.length() == motifSize){
+                        population.getPopulation().add(new Individual(s));
+                    }
+                }
+            }
         }
 
-        //population.getPopulation().add(new Individual("TTCTGCTCTTC"));
     }
 
     @Override
@@ -152,9 +167,6 @@ public class Genetic implements Runnable {
 
             population.calculateFitness(sequences);
 
-            
-            
-            
             //population.cleanDuplicates();
             population.cleanDuplicatesWaterman();
             population.completePopulation(this.size, this.motifSize);
@@ -227,7 +239,7 @@ public class Genetic implements Runnable {
         }
 
         population.cleanDuplicatesWaterman();
-        
+
         window.attGeneration(population.getPopulation());
 
         this.writeToFile();

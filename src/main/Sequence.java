@@ -50,12 +50,12 @@ public class Sequence {
 
             if (match1 >= threshold) {
                 //ind.addMatch(this, i + 1);
-                find1 = ind.pwm(this, subSeq);
+                find1 = ind.pwm(subSeq);
                 //ind.removeMatch(this, i + 1);
             }
             if (match2 >= threshold) {
                 //ind.addMatch(this, -(i + 1));
-                find2 = ind.pwm(this, Util.reverse(subSeq));
+                find2 = ind.pwm(Util.reverse(subSeq));
                 //ind.removeMatch(this, -(i + 1));
             }
 

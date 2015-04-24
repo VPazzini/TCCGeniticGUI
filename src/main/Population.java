@@ -154,7 +154,7 @@ public class Population {
         IntStream.range(0, individuals.size()).parallel().forEach(i -> {
             findInAllSequences(sequences, individuals.get(i), false);
         });
-        
+
         this.sort();
     }
 

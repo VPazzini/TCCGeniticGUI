@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.Random;
 
 public class Individual {
 
@@ -17,6 +18,7 @@ public class Individual {
     private int presence = 0;
 
     private boolean changed = true;
+    private boolean fitnessReady = false;
     private float[][] pwmMatrix;
 
     private HashMap<Sequence, Integer> matches = new HashMap<>();
@@ -47,7 +49,10 @@ public class Individual {
     }
 
     public float getFitness() {
-        return calculateFitness();
+        if(!fitnessReady){
+            fitness = calculateFitness();
+        }
+        return this.fitness;
     }
 
     public void setFitness(float fitness) {
@@ -81,6 +86,7 @@ public class Individual {
     public void addMatch(Sequence s, int init) {
         matches.put(s, init);
         this.changed = true;
+        this.fitnessReady = false;
     }
 
     public void removeMatch(Sequence s, int init) {
@@ -88,9 +94,17 @@ public class Individual {
         this.changed = true;
     }
 
-    public float pwm(Sequence seq, String subSeq) {
+    public float pwm(String subSeq) {
 
-        float[] count = seq.getFreq();
+        float[] count = {0, 0, 0, 0};
+        int maxSize = 0;
+        for (Sequence s : this.matches.keySet()) {
+            for (int i = 0; i < 4; i++) {
+                count[i] += s.getFreq()[i];
+            }
+            maxSize += s.lenght();
+        }
+
         float[][] m = matrix();
         for (char c : subSeq.toCharArray()) {
             switch (c) {
@@ -109,7 +123,7 @@ public class Individual {
             }
         }
         for (int i = 0; i < 4; i++) {
-            count[i] /= (seq.lenght() - sequence.length());
+            count[i] /= (maxSize - sequence.length());
         }
         /*for (int i = 0; i < sequence.length(); i++) {
          for (int j = 0; j < 4; j++) {
@@ -135,10 +149,10 @@ public class Individual {
                     nuc = 3;
                     break;
             }
-            for (int j = 0; j < 4; j++) {
-            //score += m[nuc][index] + (Math.log(m[nuc][index] / count[nuc]));
-            score += m[j][index] * (Math.log(m[j][index] / count[j]));
-            }
+            score += m[nuc][index] * (Math.log(m[nuc][index] / count[nuc]));
+            /*for (int j = 0; j < 4; j++) {
+             score += m[j][index] * (Math.log(m[j][index] / count[j]));
+             }*/
             index++;
         }
 
@@ -239,17 +253,9 @@ public class Individual {
 
     @Override
     public String toString() {
-        return "[fitness=" + calculateFitness() + ", seq="
+        return "[fitness=" + getFitness()+ ", seq="
                 + consensus() + ",rev=" + Util.reverse(consensus()) + ", ocor=" + presence + "]";
-                //+ sequence + ",rev=" + Util.reverse(consensus()) + ", ocor=" + presence + "]";
-    }
-
-    public String toStringFull(int percent) {
-        String s = consensus() + '=';
-        for (int f = percent; f < 100; f += 5) {
-            s += f + ":" + calculateFitness(f) + " | ";
-        }
-        return s + ", ocor=" + presence;
+        //+ sequence + ",rev=" + Util.reverse(consensus()) + ", ocor=" + presence + "]";
     }
 
     @Override
@@ -285,53 +291,129 @@ public class Individual {
         return true;
     }
 
+    public String worstMatch() {
+        String s = "";
+        float f;
+        int index = 0;
+        float[][] m = matrix();
+        for (int i = 0; i < sequence.length(); i++) {
+            f = 2;
+            for (int j = 0; j < 4; j++) {
+                if (m[j][i] < f) {
+                    f = m[j][i];
+                    index = j;
+                }
+            }
+
+            switch (index) {
+                case (0):
+                    s += 'A';
+                    break;
+                case (1):
+                    s += 'C';
+                    break;
+                case (2):
+                    s += 'T';
+                    break;
+                case (3):
+                    s += 'G';
+                    break;
+            }
+
+        }
+        return s;
+    }
+
+    public String worstMatch(int num) {
+        String s = "";
+        float f;
+        double n = num;
+        int indexWorst = 0;
+        int secondWorst = 0;
+        int index;
+        float[][] m = matrix();
+        for (int i = 0; i < sequence.length(); i++) {
+            f = 2;
+            for (int j = 0; j < 4; j++) {
+                if (m[j][i] < f) {
+                    f = m[j][i];
+                    indexWorst = j;
+                }
+            }
+            f= 2;
+            for (int j = 0; j < 4; j++) {
+                if (j != indexWorst) {
+                    if (m[j][i] < f) {
+                        f = m[j][i];
+                        secondWorst = j;
+                    }
+                }
+            }
+
+            Random r = new Random();
+            index = indexWorst;
+            float rand = r.nextFloat();
+            double dist = (n / (n + 1));
+            if (rand > dist) {
+                index = secondWorst;
+            }
+
+            switch (index) {
+                case (0):
+                    s += 'A';
+                    break;
+                case (1):
+                    s += 'C';
+                    break;
+                case (2):
+                    s += 'T';
+                    break;
+                case (3):
+                    s += 'G';
+                    break;
+            }
+        }
+
+        return s;
+    }
+
     public float calculateFitness() {
         float temp = 0;
         if (matches.isEmpty()) {
             return 1;
         }
-        for (Sequence seq : matches.keySet()) {
-            String m = seq.getSubSequence(matches.get(seq),
-                    this.sequence.length());
+        temp = this.pwm(this.consensus());
+        //temp = this.pwm(this.sequence);
+        /*for (Sequence seq : matches.keySet()) {
+         String m = seq.getSubSequence(matches.get(seq),
+         this.sequence.length());
 
-            temp += this.pwm(seq, m);
+         temp += this.pwm(seq, m);
 
-        }
-        /*return temp
-         / (matches.size())
-         - ((Population.getInstance().getNumSequences() / 2) / matches
-         .size());*/
-        //temp = (float) temp - ((3 * this.sequence.length()) / (matches.size()));
-        temp = (temp / matches.size()) - ((3 * this.sequence.length()) / (matches.size()));
+         }
+         */
+
+        /*String s = worstMatch(10);
+        System.out.println(consensus() + " " + pwm(consensus())
+                + " " + worstMatch() + " " + pwm(worstMatch())
+                + " " + s + " " + pwm(s));*/
+
+        /*double dec = 1, w = 0.2, re;
+        double wm = pwm(worstMatch());
+        for (int i = 1; i < matches.size() - 1; i++) {
+            re = (wm - pwm(worstMatch(i))) / wm;
+            dec *= (1 + w * (re));
+        }*/
+
+        temp = ((float) temp - ((3 * this.sequence.length()) / (matches.size())));
+        //temp = (temp / matches.size()) - ((3 * this.sequence.length()) / (matches.size()));
         
-
-        if (temp < 1) {
-            return 1;
-        } else {
-            return temp;
-        }
-    }
-
-    public float calculateFitness(int percent) {
-        float temp = 0;
-        if (matches.isEmpty()) {
-            return 1;
-        }
-        for (Sequence seq : matches.keySet()) {
-            String m = seq.getSubSequence(matches.get(seq),
-                    this.sequence.length());
-
-            if (Util.similarity(m, this.consensus()) > (((float) percent) / 100)) {
-                temp += this.pwm(seq, m);
-            }
-
-        }
-        /*return temp
-         / (matches.size())
-         - ((Population.getInstance().getNumSequences() / 2) / matches
-         .size());*/
-        temp = temp / (matches.size()) - ((3 * this.sequence.length()) / (matches.size()));
-
+        //System.out.println(dec);
+        //temp *= dec;
+        //System.out.println(temp);
+        
+        fitnessReady = true;
+        
         if (temp < 1) {
             return 1;
         } else {
@@ -352,7 +434,7 @@ public class Individual {
             // writer = new PrintWriter("output.txt", "UTF-8");
 
             output.write("Motif:\t" + sequence + "| Fitness: "
-                    + this.calculateFitness() + "\n");
+                    + this.getFitness()+ "\n");
             output.write("Consensus:\t" + this.consensus() + " | " + Util.reverse(this.consensus()) + "\n");
             output.write("Matches:\n");
 
@@ -373,7 +455,7 @@ public class Individual {
                 }
                 output.write(" | "
                         // + Population.getInstance().find(this.sequence, m)
-                        + this.pwm(seq, m) + " | "
+                        + this.pwm(m) + " | "
                         + Population.getInstance().similarity(con, m) * 100
                         + "% | " + seq.getName() + " (" + matches.get(seq)
                         + ")\n");

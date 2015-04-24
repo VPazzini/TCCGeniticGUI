@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import main.Genetic;
 import main.Individual;
@@ -24,6 +23,7 @@ public class MainWindow extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null);
         setExtendedState(this.MAXIMIZED_BOTH);
+        //System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
     }
 
     @SuppressWarnings("unchecked")
@@ -45,7 +45,7 @@ public class MainWindow extends javax.swing.JFrame {
         jSpinnerSurvivors = new javax.swing.JSpinner();
         jComboBoxSelectionMethod = new javax.swing.JComboBox();
         jTextFieldFilePath = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        jButtonFastaFile = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextAreaOutPut = new javax.swing.JTextArea();
         jLabelPopSize = new javax.swing.JLabel();
@@ -58,7 +58,7 @@ public class MainWindow extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         jLabelMeanLenght = new javax.swing.JLabel();
         jTextFieldMotifFilePath = new javax.swing.JTextField();
-        jButton2 = new javax.swing.JButton();
+        jButtonMotifFile = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
@@ -97,10 +97,10 @@ public class MainWindow extends javax.swing.JFrame {
 
         jComboBoxSelectionMethod.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Selection Method", "Random", "Roullete Wheel" }));
 
-        jButton1.setText("FASTA File");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        jButtonFastaFile.setText("FASTA File");
+        jButtonFastaFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                jButtonFastaFileActionPerformed(evt);
             }
         });
 
@@ -135,10 +135,10 @@ public class MainWindow extends javax.swing.JFrame {
         jLabelMeanLenght.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabelMeanLenght.setText("0");
 
-        jButton2.setText("Motifs File");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        jButtonMotifFile.setText("Motifs File");
+        jButtonMotifFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                jButtonMotifFileActionPerformed(evt);
             }
         });
 
@@ -199,8 +199,8 @@ public class MainWindow extends javax.swing.JFrame {
                                     .addComponent(jLabelMeanLenght, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jLabelSequences, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jLabelGeneration, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                            .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButtonFastaFile, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButtonMotifFile, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jButtonRun, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
@@ -234,11 +234,11 @@ public class MainWindow extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextFieldFilePath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
+                    .addComponent(jButtonFastaFile))
                 .addGap(5, 5, 5)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextFieldMotifFilePath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2))
+                    .addComponent(jButtonMotifFile))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -294,7 +294,9 @@ public class MainWindow extends javax.swing.JFrame {
                 return;
             }
 
-            g.readFile(jTextFieldFilePath.getText());
+            for (String s : jTextFieldFilePath.getText().split(";")) {
+                g.readFile(s);
+            }
 
             g.setUp((int) jSpinnerGenerations.getValue(), (int) jSpinnerPopulationSize.getValue(),
                     (int) jSpinnerMotifSize.getValue(), (int) jComboBoxPopulationMethod.getSelectedIndex(),
@@ -325,28 +327,32 @@ public class MainWindow extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButtonRunActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void jButtonFastaFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonFastaFileActionPerformed
 
-        JFileChooser fileChooser = new JFileChooser((new File("")).getAbsoluteFile()+ "/input");
-
+        JFileChooser fileChooser = new JFileChooser((new File("")).getAbsoluteFile() + "/input");
+        fileChooser.setMultiSelectionEnabled(true);
         if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            this.jTextFieldFilePath.setText(fileChooser.getSelectedFile().toString());
+            String s = "";
+            for (File f : fileChooser.getSelectedFiles()) {
+                s += f.getAbsolutePath() + ";";
+            }
+            this.jTextFieldFilePath.setText(s);
         }
 
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_jButtonFastaFileActionPerformed
 
     private void jSpinnerComparisonThresholdStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSpinnerComparisonThresholdStateChanged
         double d = (double) jSpinnerComparisonThreshold.getValue();
         Population.getInstance().setThresholdComparison(d);
     }//GEN-LAST:event_jSpinnerComparisonThresholdStateChanged
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void jButtonMotifFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonMotifFileActionPerformed
         JFileChooser fileChooser = new JFileChooser((new File("")).getAbsoluteFile());
 
         if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             this.jTextFieldMotifFilePath.setText(fileChooser.getSelectedFile().toString());
         }
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_jButtonMotifFileActionPerformed
 
     public void attGeneration(ArrayList<Individual> list) {
         this.jTextAreaOutPut.setText("");
@@ -368,16 +374,14 @@ public class MainWindow extends javax.swing.JFrame {
         //JOptionPane.showMessageDialog(this, "Computation Finished");
 
         File f = new File(jTextFieldFilePath.getText());
-        String path = (new File("")).getAbsoluteFile()+"/output/"+f.getName()+"/";
+        String path = (new File("")).getAbsoluteFile() + "/output/" + f.getName() + "/";
         File newDir = new File(path);
-        if(!newDir.exists()){
+        if (!newDir.exists()) {
             newDir.mkdir();
         }
-        
-        JFileChooser fileChooser = new JFileChooser((new File("")).getAbsoluteFile()+"/output/"+f.getName() + "/");
-        
-        
-        
+
+        JFileChooser fileChooser = new JFileChooser((new File("")).getAbsoluteFile() + "/output/" + f.getName() + "/");
+
         fileChooser.setDialogTitle("Specify a file to save");
         fileChooser.setSelectedFile(new File("/output/output_S"
                 + this.jSpinnerMotifSize.getValue() + "_"
@@ -406,7 +410,6 @@ public class MainWindow extends javax.swing.JFrame {
         };
 
         jButtonRun.setText("Run");
-
 
         //fileChooser.showOpenDialog(this);
     }
@@ -447,8 +450,8 @@ public class MainWindow extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButtonFastaFile;
+    private javax.swing.JButton jButtonMotifFile;
     private javax.swing.JButton jButtonRun;
     private javax.swing.JComboBox jComboBoxCrossOverMethod;
     private javax.swing.JComboBox jComboBoxPopulationMethod;
