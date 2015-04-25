@@ -401,8 +401,9 @@ public class Individual {
         /*double dec = 1, w = 0.2, re;
         double wm = pwm(worstMatch());
         for (int i = 1; i < matches.size() - 1; i++) {
-            re = (wm - pwm(worstMatch(i))) / wm;
-            dec *= (1 + w * (re));
+            double swm = pwm(worstMatch(i));
+            re = (wm - swm) / swm;
+            dec *= (1 + (w * re));
         }*/
 
         temp = ((float) temp - ((3 * this.sequence.length()) / (matches.size())));

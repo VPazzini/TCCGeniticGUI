@@ -167,7 +167,7 @@ public class Genetic implements Runnable {
 
             population.calculateFitness(sequences);
 
-            //population.cleanDuplicates();
+            population.cleanDuplicates();
             population.cleanDuplicatesWaterman();
             population.completePopulation(this.size, this.motifSize);
 

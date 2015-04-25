@@ -1,5 +1,8 @@
 package GUI;
 
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -7,7 +10,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import main.Genetic;
 import main.Individual;
@@ -23,6 +28,24 @@ public class MainWindow extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null);
         setExtendedState(this.MAXIMIZED_BOTH);
+
+        MouseListener mouseListener;
+        mouseListener = new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent mouseEvent) {
+                JList theList = (JList) mouseEvent.getSource();
+                if (mouseEvent.getClickCount() == 2) {
+                    int index = theList.locationToIndex(mouseEvent.getPoint());
+                    if (index >= 0) {
+                        Object o = theList.getModel().getElementAt(index);
+                        //System.out.println("Double-clicked on: " + o.toString());
+                        new IndividualDisplay((Individual) o);
+                    }
+                }
+            }
+        };
+        jList1.addMouseListener(mouseListener);
+
         //System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
     }
 
@@ -46,8 +69,6 @@ public class MainWindow extends javax.swing.JFrame {
         jComboBoxSelectionMethod = new javax.swing.JComboBox();
         jTextFieldFilePath = new javax.swing.JTextField();
         jButtonFastaFile = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextAreaOutPut = new javax.swing.JTextArea();
         jLabelPopSize = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jButtonRun = new javax.swing.JButton();
@@ -59,6 +80,8 @@ public class MainWindow extends javax.swing.JFrame {
         jLabelMeanLenght = new javax.swing.JLabel();
         jTextFieldMotifFilePath = new javax.swing.JTextField();
         jButtonMotifFile = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jList1 = new javax.swing.JList();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
@@ -89,7 +112,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         jComboBoxPopulationMethod.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Population Creation Method", "Random", "Clustering" }));
 
-        jComboBoxCrossOverMethod.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "CrossOver Method" }));
+        jComboBoxCrossOverMethod.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "CrossOver Method", "One Point CrossOver", "Two Point CrossOver", "Best of Each", "All of them" }));
 
         jLabel17.setText("Survaviors from Previous Generation");
 
@@ -103,10 +126,6 @@ public class MainWindow extends javax.swing.JFrame {
                 jButtonFastaFileActionPerformed(evt);
             }
         });
-
-        jTextAreaOutPut.setColumns(20);
-        jTextAreaOutPut.setRows(5);
-        jScrollPane1.setViewportView(jTextAreaOutPut);
 
         jLabelPopSize.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabelPopSize.setText("0");
@@ -141,6 +160,8 @@ public class MainWindow extends javax.swing.JFrame {
                 jButtonMotifFileActionPerformed(evt);
             }
         });
+
+        jScrollPane2.setViewportView(jList1);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -181,9 +202,9 @@ public class MainWindow extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jTextFieldMotifFilePath)
-                            .addComponent(jTextFieldFilePath, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING))
+                            .addComponent(jTextFieldFilePath, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE))
                         .addGap(6, 6, 6)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
@@ -257,9 +278,9 @@ public class MainWindow extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabelPopSize)
                             .addComponent(jLabel4))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 161, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButtonRun))
-                    .addComponent(jScrollPane1))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 261, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -355,19 +376,24 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonMotifFileActionPerformed
 
     public void attGeneration(ArrayList<Individual> list) {
-        this.jTextAreaOutPut.setText("");
+        //this.jTextAreaOutPut.setText("");
         String s = "";
         int i = 0;
+        DefaultListModel listModel = new DefaultListModel();
+
         for (Individual ind : list) {
             s += ind.toString() + "\n";
+            listModel.addElement(ind);
             //s += ind.toStringFull((int) (((double)jSpinnerComparisonThreshold.getValue())*100)) + "\n";
             if (i++ == 30) {
                 break;
             }
         }
-        this.jTextAreaOutPut.setText(s);
+        jList1.setModel(listModel);
+        //this.jTextAreaOutPut.setText(s);
         this.jLabelGeneration.setText(g.getGen() + "");
         this.jLabelPopSize.setText(Population.getInstance().getPopulation().size() + "");
+
     }
 
     public void finished() {
@@ -469,17 +495,17 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelMeanLenght;
     private javax.swing.JLabel jLabelPopSize;
     private javax.swing.JLabel jLabelSequences;
+    private javax.swing.JList jList1;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSpinner jSpinnerComparisonThreshold;
     private javax.swing.JSpinner jSpinnerGenerations;
     private javax.swing.JSpinner jSpinnerMotifSize;
     private javax.swing.JSpinner jSpinnerPopulationSize;
     private javax.swing.JSpinner jSpinnerSurvivors;
-    private javax.swing.JTextArea jTextAreaOutPut;
     private javax.swing.JTextField jTextFieldFilePath;
     private javax.swing.JTextField jTextFieldMotifFilePath;
     // End of variables declaration//GEN-END:variables
