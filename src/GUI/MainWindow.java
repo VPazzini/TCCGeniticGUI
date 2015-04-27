@@ -22,12 +22,20 @@ import main.Sequence;
 public class MainWindow extends javax.swing.JFrame {
 
     private Genetic g;
-    Thread t;
+    private Thread t;
 
     public MainWindow() {
         initComponents();
         setLocationRelativeTo(null);
-        setExtendedState(this.MAXIMIZED_BOTH);
+        setExtendedState(MainWindow.MAXIMIZED_BOTH);
+
+        jButtonSaveToFile.setVisible(false);
+
+        try {
+            File f = new File((new File("")).getAbsoluteFile() + "/input");
+            jTextFieldFilePath.setText(f.listFiles()[0].getAbsolutePath());
+        } catch (Exception e) {
+        }
 
         MouseListener mouseListener;
         mouseListener = new MouseAdapter() {
@@ -38,7 +46,6 @@ public class MainWindow extends javax.swing.JFrame {
                     int index = theList.locationToIndex(mouseEvent.getPoint());
                     if (index >= 0) {
                         Object o = theList.getModel().getElementAt(index);
-                        //System.out.println("Double-clicked on: " + o.toString());
                         new IndividualDisplay((Individual) o);
                     }
                 }
@@ -46,7 +53,6 @@ public class MainWindow extends javax.swing.JFrame {
         };
         jList1.addMouseListener(mouseListener);
 
-        //System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
     }
 
     @SuppressWarnings("unchecked")
@@ -82,6 +88,7 @@ public class MainWindow extends javax.swing.JFrame {
         jButtonMotifFile = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList();
+        jButtonSaveToFile = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
@@ -111,6 +118,7 @@ public class MainWindow extends javax.swing.JFrame {
         });
 
         jComboBoxPopulationMethod.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Population Creation Method", "Random", "Clustering" }));
+        jComboBoxPopulationMethod.setSelectedIndex(2);
 
         jComboBoxCrossOverMethod.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "CrossOver Method", "One Point CrossOver", "Two Point CrossOver", "Best of Each", "All of them" }));
 
@@ -119,6 +127,7 @@ public class MainWindow extends javax.swing.JFrame {
         jSpinnerSurvivors.setModel(new javax.swing.SpinnerNumberModel(0.05d, 0.0d, 0.8d, 0.01d));
 
         jComboBoxSelectionMethod.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Selection Method", "Random", "Roullete Wheel" }));
+        jComboBoxSelectionMethod.setSelectedIndex(2);
 
         jButtonFastaFile.setText("FASTA File");
         jButtonFastaFile.addActionListener(new java.awt.event.ActionListener() {
@@ -163,6 +172,13 @@ public class MainWindow extends javax.swing.JFrame {
 
         jScrollPane2.setViewportView(jList1);
 
+        jButtonSaveToFile.setText("Save to File");
+        jButtonSaveToFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSaveToFileActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -206,7 +222,7 @@ public class MainWindow extends javax.swing.JFrame {
                             .addComponent(jTextFieldMotifFilePath)
                             .addComponent(jTextFieldFilePath, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE))
                         .addGap(6, 6, 6)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
@@ -222,7 +238,8 @@ public class MainWindow extends javax.swing.JFrame {
                                     .addComponent(jLabelGeneration, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                             .addComponent(jButtonFastaFile, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jButtonMotifFile, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButtonRun, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(jButtonRun, javax.swing.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
+                            .addComponent(jButtonSaveToFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
 
@@ -279,6 +296,8 @@ public class MainWindow extends javax.swing.JFrame {
                             .addComponent(jLabelPopSize)
                             .addComponent(jLabel4))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButtonSaveToFile)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButtonRun))
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 261, Short.MAX_VALUE))
                 .addContainerGap())
@@ -308,6 +327,10 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void jButtonRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRunActionPerformed
         if (jButtonRun.getText().equals("Run")) {
+
+
+            jButtonSaveToFile.setVisible(false);
+
             g = new Genetic();
 
             if (jTextFieldFilePath.getText().length() == 0) {
@@ -325,7 +348,6 @@ public class MainWindow extends javax.swing.JFrame {
                     (double) jSpinnerSurvivors.getValue(), (int) jComboBoxSelectionMethod.getSelectedIndex(),
                     this);
 
-            //System.out.println(g.getSequences().size() + " Sequences");
             this.jLabelSequences.setText(g.getSequences().size() + "");
             float size = 0;
             for (Sequence s : g.getSequences()) {
@@ -375,37 +397,8 @@ public class MainWindow extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButtonMotifFileActionPerformed
 
-    public void attGeneration(ArrayList<Individual> list) {
-        //this.jTextAreaOutPut.setText("");
-        String s = "";
-        int i = 0;
-        DefaultListModel listModel = new DefaultListModel();
-
-        for (Individual ind : list) {
-            s += ind.toString() + "\n";
-            listModel.addElement(ind);
-            //s += ind.toStringFull((int) (((double)jSpinnerComparisonThreshold.getValue())*100)) + "\n";
-            if (i++ == 30) {
-                break;
-            }
-        }
-        jList1.setModel(listModel);
-        //this.jTextAreaOutPut.setText(s);
-        this.jLabelGeneration.setText(g.getGen() + "");
-        this.jLabelPopSize.setText(Population.getInstance().getPopulation().size() + "");
-
-    }
-
-    public void finished() {
-        //JOptionPane.showMessageDialog(this, "Computation Finished");
-
+    private void jButtonSaveToFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveToFileActionPerformed
         File f = new File(jTextFieldFilePath.getText().split(";")[0]);
-        String path = (new File("")).getAbsoluteFile() + "/output/" + f.getName() + "/";
-        File newDir = new File(path);
-        if (!newDir.exists()) {
-            newDir.mkdir();
-        }
-
         JFileChooser fileChooser = new JFileChooser((new File("")).getAbsoluteFile() + "/output/" + f.getName() + "/");
 
         fileChooser.setDialogTitle("Specify a file to save");
@@ -421,19 +414,43 @@ public class MainWindow extends javax.swing.JFrame {
                 int dialogResult = JOptionPane.showConfirmDialog(null, "Would You Like to Overwrite the existing file?", "Warning", JOptionPane.YES_NO_OPTION);
                 if (dialogResult == JOptionPane.YES_OPTION) {
                     try {
-                        new BufferedWriter(new FileWriter(fileToSave, false));
+                        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileToSave, false));
                     } catch (IOException ex) {
                         Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             }
-            //System.out.println("Save as file: " + fileToSave.getAbsolutePath());
 
-            for (Individual ind : Population.getInstance().getPopulation()) {
+            Population.getInstance().getPopulation().stream().forEach((ind) -> {
                 ind.writeToFile(fileToSave);
-            }
+            });
 
-        };
+        }
+    }//GEN-LAST:event_jButtonSaveToFileActionPerformed
+
+    public void attGeneration(ArrayList<Individual> list) {
+        DefaultListModel listModel = new DefaultListModel();
+        list.stream().forEach((ind) -> {
+            listModel.addElement(ind);
+        });
+
+        jList1.setModel(listModel);
+        this.jLabelGeneration.setText(g.getGen() + "");
+        this.jLabelPopSize.setText(Population.getInstance().getPopulation().size() + "");
+
+    }
+
+    public void finished() {
+        JOptionPane.showMessageDialog(this, "Computation Finished");
+
+        File f = new File(jTextFieldFilePath.getText().split(";")[0]);
+        String path = (new File("")).getAbsoluteFile() + "/output/" + f.getName() + "/";
+        File newDir = new File(path);
+        if (!newDir.exists()) {
+            newDir.mkdir();
+        }
+
+        jButtonSaveToFile.setVisible(true);
 
         jButtonRun.setText("Run");
 
@@ -479,6 +496,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JButton jButtonFastaFile;
     private javax.swing.JButton jButtonMotifFile;
     private javax.swing.JButton jButtonRun;
+    private javax.swing.JButton jButtonSaveToFile;
     private javax.swing.JComboBox jComboBoxCrossOverMethod;
     private javax.swing.JComboBox jComboBoxPopulationMethod;
     private javax.swing.JComboBox jComboBoxSelectionMethod;

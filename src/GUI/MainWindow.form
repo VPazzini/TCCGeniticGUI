@@ -109,7 +109,7 @@
                               <Component id="jTextFieldFilePath" alignment="0" pref="376" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
@@ -129,7 +129,8 @@
                               </Group>
                               <Component id="jButtonFastaFile" alignment="1" min="-2" pref="145" max="-2" attributes="0"/>
                               <Component id="jButtonMotifFile" alignment="1" min="-2" pref="145" max="-2" attributes="0"/>
-                              <Component id="jButtonRun" alignment="1" min="-2" pref="146" max="-2" attributes="0"/>
+                              <Component id="jButtonRun" alignment="0" pref="146" max="32767" attributes="0"/>
+                              <Component id="jButtonSaveToFile" alignment="0" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -198,6 +199,8 @@
                               <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="32767" attributes="0"/>
+                          <Component id="jButtonSaveToFile" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="jButtonRun" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Component id="jScrollPane2" pref="261" max="32767" attributes="0"/>
@@ -268,6 +271,7 @@
                 <StringItem index="2" value="Clustering"/>
               </StringArray>
             </Property>
+            <Property name="selectedIndex" type="int" value="2"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JComboBox" name="jComboBoxCrossOverMethod">
@@ -304,6 +308,7 @@
                 <StringItem index="2" value="Roullete Wheel"/>
               </StringArray>
             </Property>
+            <Property name="selectedIndex" type="int" value="2"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="jTextFieldFilePath">
@@ -394,6 +399,14 @@
             </Component>
           </SubComponents>
         </Container>
+        <Component class="javax.swing.JButton" name="jButtonSaveToFile">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Save to File"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonSaveToFileActionPerformed"/>
+          </Events>
+        </Component>
       </SubComponents>
     </Container>
   </SubComponents>

@@ -160,8 +160,16 @@ public class Population {
 
     public void cleanDuplicates() {
         ArrayList<Individual> cleaned = new ArrayList<>();
+        boolean b;
         for (Individual ind : individuals) {
-            if (!cleaned.contains(ind)) {
+            b = false;
+            for(Individual ind2 : cleaned){
+                if(Util.similarity(ind.consensus(), ind2.consensus()) > 0.7){
+                    b = true;
+                    break;
+                }
+            }
+            if(!b){
                 cleaned.add(ind);
             }
         }
@@ -180,7 +188,7 @@ public class Population {
                 sw = new SWaterman(ind.consensus(), ind2.consensus());
                 int sco = sw.computeSmithWaterman();
                 
-                if (sco > (ind.consensus().length() * 2 * 0.8)) {
+                if (sco > (ind.consensus().length() * 2 * 0.7)) {
                     b = true;
                     break;
                 }
@@ -188,7 +196,7 @@ public class Population {
                 sw = new SWaterman(ind2.consensus(), ind.consensus());
                 sco = sw.computeSmithWaterman();
                 
-                if (sco > (ind.consensus().length() * 2 * 0.8)) {
+                if (sco > (ind.consensus().length() * 2 * 0.7)) {
                     b = true;
                     break;
                 }

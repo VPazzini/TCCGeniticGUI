@@ -1,41 +1,30 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package GUI;
 
 import main.Individual;
 import main.Sequence;
 import main.Util;
 
-/**
- *
- * @author Vinicius
- */
 public class IndividualDisplay extends javax.swing.JFrame {
 
-    /**
-     * Creates new form IndividualDisplay
-     */
     Individual ind;
+
     public IndividualDisplay(Individual ind) {
         initComponents();
         this.ind = ind;
         String occurences = "";
-        for(Sequence s : ind.getMatches().keySet()){
+        for (Sequence s : ind.getMatches().keySet()) {
             String subSeq = s.getSubSequence(ind.getMatches().get(s), ind.getSequence().length());
             occurences += subSeq += "\n";
         }
-        
+
         this.jLabelMotif.setText(ind.getSequence());
         this.jLabelConsensus.setText(ind.consensus());
         this.jTextArea1.setText(occurences);
-        
+
         this.setVisible(true);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        
+
     }
 
     /**
@@ -134,13 +123,12 @@ public class IndividualDisplay extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         String occurences = "";
-        for(Sequence s : ind.getMatches().keySet()){
-            String subSeq = s.getSubSequence(ind.getMatches().get(s), ind.getSequence().length());
-            occurences += Util.reverse(subSeq) + "\n";
+        for (String s : jTextArea1.getText().split("\n")) {
+
+            occurences += Util.reverse(s) + "\n";
         }
         this.jTextArea1.setText(occurences);
     }//GEN-LAST:event_jButton1ActionPerformed
-
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
