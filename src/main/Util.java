@@ -87,5 +87,30 @@ public class Util {
         }
         return match / motif.length();
     }
-
+    
+    public static float similarity(Individual ind, String seq) {
+        if (ind.getSequence().length() != seq.length()) {
+            return 0;
+        }
+        float match = 0;
+        float[][] m = ind.matrix();
+        for (int i = 0; i < seq.length(); i++) {
+            switch (seq.charAt(i)) {
+                case ('A'):
+                    match += m[0][i];
+                    break;
+                case ('C'):
+                    match += m[1][i];
+                    break;
+                case ('T'):
+                    match += m[2][i];
+                    break;
+                case ('G'):
+                    match += m[3][i];
+                    break;
+            }
+        }
+        return match / seq.length();
+    }
+    
 }

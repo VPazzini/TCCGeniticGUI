@@ -13,6 +13,7 @@ public class Population {
     private int numSequences = 0;
     private ArrayList<Individual> individuals = new ArrayList<>();
     private double thresholdComparison = 0.7;
+    private boolean searchOnReverse = true;
 
     public Population() {
         this.individuals = new ArrayList<>();
@@ -44,8 +45,8 @@ public class Population {
         }
 
     }
-    
-    public void completePopulation(int size,int motifSize){
+
+    public void completePopulation(int size, int motifSize) {
         for (int i = individuals.size(); i < size; i++) {
             Individual ind = new Individual(generateMotif(motifSize));
             individuals.add(ind);
@@ -141,6 +142,7 @@ public class Population {
 
     public void findInAllSequences(ArrayList<Sequence> sequences,
             Individual ind, boolean verb) {
+        //if (!ind.isFitnessReady()) {
         if (ind.getFitness() == 1) {
             for (Sequence seq : sequences) {
                 seq.findInSequence(ind, verb);
@@ -163,13 +165,13 @@ public class Population {
         boolean b;
         for (Individual ind : individuals) {
             b = false;
-            for(Individual ind2 : cleaned){
-                if(Util.similarity(ind.consensus(), ind2.consensus()) > 0.7){
+            for (Individual ind2 : cleaned) {
+                if (Util.similarity(ind.consensus(), ind2.consensus()) > 0.7) {
                     b = true;
                     break;
                 }
             }
-            if(!b){
+            if (!b) {
                 cleaned.add(ind);
             }
         }
@@ -187,31 +189,31 @@ public class Population {
 
                 sw = new SWaterman(ind.consensus(), ind2.consensus());
                 int sco = sw.computeSmithWaterman();
-                
+
                 if (sco > (ind.consensus().length() * 2 * 0.7)) {
                     b = true;
                     break;
                 }
-                
+
                 sw = new SWaterman(ind2.consensus(), ind.consensus());
                 sco = sw.computeSmithWaterman();
-                
+
                 if (sco > (ind.consensus().length() * 2 * 0.7)) {
                     b = true;
                     break;
                 }
-                
+
                 sw = new SWaterman(ind.consensus(), Util.reverse(ind2.consensus()));
                 sco = sw.computeSmithWaterman();
-                
+
                 if (sco > (ind.consensus().length() * 2 * 0.8)) {
                     b = true;
                     break;
                 }
-                
+
                 sw = new SWaterman(ind2.consensus(), Util.reverse(ind.consensus()));
                 sco = sw.computeSmithWaterman();
-                
+
                 if (sco > (ind.consensus().length() * 2 * 0.8)) {
                     b = true;
                     break;
@@ -240,38 +242,6 @@ public class Population {
         return match / motif.length();
     }
 
-    public float find2(String motif, String seq) {
-        if (motif.length() != seq.length()) {
-            return 0;
-        }
-        float match = 0;
-        for (int i = 0; i < motif.length(); i++) {
-            if (motif.charAt(i) == seq.charAt(i)) {
-                match++;
-            }
-        }
-        return match / motif.length();
-    }
-
-    public float find(String motif, String seq) {
-        if (motif.length() != seq.length()) {
-            return 0;
-        }
-        float match = 0;
-        double right = 1, wrong = 1;
-        for (int i = 0; i < motif.length(); i++) {
-            if (motif.charAt(i) == seq.charAt(i)) {
-                match += right;
-                right += 1;
-                wrong = 1;
-            } else {
-                match -= wrong;
-                wrong += 1;
-                right = 1;
-            }
-        }
-        return match;
-    }
 
     public void sort() {
         Collections.sort(individuals, new CompareIndividual());
@@ -299,6 +269,14 @@ public class Population {
 
     public void setThresholdComparison(double thresholdComparison) {
         this.thresholdComparison = thresholdComparison;
+    }
+
+    public boolean isSearchOnReverse() {
+        return searchOnReverse;
+    }
+
+    public void setSearchOnReverse(boolean searchOnReverse) {
+        this.searchOnReverse = searchOnReverse;
     }
 
 }

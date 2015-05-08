@@ -40,8 +40,13 @@ public class Sequence {
         for (int i = 0; i < this.sequence.length() - motif.length(); i++) {
             subSeq = this.sequence.substring(i, i + motif.length());
 
-            match1 = similarity(motif, subSeq);
-            match2 = similarity(Util.reverse(motif), subSeq);
+            //match1 = similarity(motif, subSeq);
+            match1 = similarity(ind, subSeq);
+
+            if (Population.getInstance().isSearchOnReverse()) {
+                //match2 = similarity(Util.reverse(motif), subSeq);
+                match2 = similarity(ind, Util.reverse(subSeq));
+            }
             //find1 = find(motif, subSeq);
             //find2 = find(ind.getRevSequence(), subSeq);
 
@@ -61,24 +66,39 @@ public class Sequence {
 
             if (match1 >= threshold) {
 
-                if (find1 > temp && find1 > find2) {
+                if (find1 > temp && find1 >= find2) {
                     temp = find1;
+                    /*if (ind.getMatches().isEmpty()) {
+                        temp = match1;
+                    }*/
                     //temp2 = find3;
                     tempSeq = subSeq;
                     initSeq = i + 1;
                 }
+                /*if (find1 >= find2 && find1 >= threshold*10) {
+                    ind.setPresence(ind.getPresence() + 1);
+                    ind.addMatch(this, i + 1);
+                }*/
             }
             if (match2 >= threshold) {
 
                 if (find2 > temp && find2 > find1) {
                     temp = find2;
+                    /*if (ind.getMatches().isEmpty()) {
+                        temp = match2;
+                    }*/
                     //temp2 = find4;
                     tempSeq = Util.reverse(subSeq);
                     initSeq = -(i + 1);
                 }
+                /*if (find2 > find1 && find2 >= threshold*10) {
+                    ind.setPresence(ind.getPresence() + 1);
+                    ind.addMatch(this, -(i + 1));
+                }*/
             }
         }
-
+        //System.out.println(temp);
+        //if (temp > -9999) {
         if (temp > 0) {
             ind.setPresence(ind.getPresence() + 1);
             ind.addMatch(this, initSeq);
@@ -99,37 +119,29 @@ public class Sequence {
         return match / motif.length();
     }
 
-    public float find2(String motif, String seq) {
-        if (motif.length() != seq.length()) {
+    public float similarity(Individual ind, String seq) {
+        if (ind.getSequence().length() != seq.length()) {
             return 0;
         }
         float match = 0;
-        for (int i = 0; i < motif.length(); i++) {
-            if (motif.charAt(i) == seq.charAt(i)) {
-                match++;
+        float[][] m = ind.matrix();
+        for (int i = 0; i < seq.length(); i++) {
+            switch (seq.charAt(i)) {
+                case ('A'):
+                    match += m[0][i];
+                    break;
+                case ('C'):
+                    match += m[1][i];
+                    break;
+                case ('T'):
+                    match += m[2][i];
+                    break;
+                case ('G'):
+                    match += m[3][i];
+                    break;
             }
         }
-        return match / motif.length();
-    }
-
-    public float find(String motif, String seq) {
-        if (motif.length() != seq.length()) {
-            return 0;
-        }
-        float match = 0;
-        double right = 1, wrong = 1;
-        for (int i = 0; i < motif.length(); i++) {
-            if (motif.charAt(i) == seq.charAt(i)) {
-                match += right;
-                right += 1;
-                wrong = 1;
-            } else {
-                match -= wrong;
-                wrong += 1;
-                right = 1;
-            }
-        }
-        return match;
+        return match / seq.length();
     }
 
     public String getSubSequence(int init, int size) {

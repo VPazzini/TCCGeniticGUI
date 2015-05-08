@@ -97,8 +97,9 @@
                               </Group>
                           </Group>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="jSpinnerSurvivors" alignment="0" pref="115" max="32767" attributes="0"/>
+                              <Component id="jSpinnerSurvivors" alignment="0" max="32767" attributes="0"/>
                               <Component id="jSpinnerComparisonThreshold" alignment="0" max="32767" attributes="0"/>
+                              <Component id="jCheckBox1" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
@@ -106,7 +107,7 @@
                           <Group type="103" groupAlignment="1" attributes="0">
                               <Component id="jScrollPane2" alignment="0" max="32767" attributes="0"/>
                               <Component id="jTextFieldMotifFilePath" max="32767" attributes="0"/>
-                              <Component id="jTextFieldFilePath" alignment="0" pref="376" max="32767" attributes="0"/>
+                              <Component id="jTextFieldFilePath" alignment="0" pref="384" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -160,6 +161,7 @@
                       <Component id="jSpinnerGenerations" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel14" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jComboBoxPopulationMethod" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jCheckBox1" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -405,6 +407,15 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonSaveToFileActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="jCheckBox1">
+          <Properties>
+            <Property name="selected" type="boolean" value="true"/>
+            <Property name="text" type="java.lang.String" value="Search Reverse Seq"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCheckBox1ActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

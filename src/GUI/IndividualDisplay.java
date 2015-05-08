@@ -13,8 +13,12 @@ public class IndividualDisplay extends javax.swing.JFrame {
         this.ind = ind;
         String occurences = "";
         for (Sequence s : ind.getMatches().keySet()) {
-            String subSeq = s.getSubSequence(ind.getMatches().get(s), ind.getSequence().length());
-            occurences += subSeq += "\n";
+            for (Integer init : ind.getMatches().get(s)) {
+                //String subSeq = s.getSubSequence(ind.getMatches().get(s), ind.getSequence().length());
+                String subSeq = s.getSubSequence(init, ind.getSequence().length());
+
+                occurences += subSeq += "\n";
+            }
         }
 
         this.jLabelMotif.setText(ind.getSequence());

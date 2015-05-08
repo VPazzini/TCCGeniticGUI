@@ -36,6 +36,7 @@ public class Genetic implements Runnable {
             String tempSequence = "";
             String seqName = "";
             while ((line = out.readLine()) != null) {
+                line = line.toUpperCase().trim();
                 if (line.length() > 0) {
                     char c = line.charAt(0);
                     if (c == 'A' || c == 'C' || c == 'T' || c == 'G') {
@@ -60,7 +61,7 @@ public class Genetic implements Runnable {
             out.close();
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println(e);
             System.exit(0);
         }
     }

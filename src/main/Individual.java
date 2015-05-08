@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -21,7 +22,7 @@ public class Individual {
     private boolean fitnessReady = false;
     private float[][] pwmMatrix;
 
-    private HashMap<Sequence, Integer> matches = new HashMap<>();
+    private HashMap<Sequence, ArrayList<Integer>> matches = new HashMap<>();
     String[] nucleotides = {"A", "C", "T", "G"};
 
     public Individual(float fitness, String sequence) {
@@ -49,10 +50,14 @@ public class Individual {
     }
 
     public float getFitness() {
-        if(!fitnessReady){
+        if (!fitnessReady) {
             fitness = calculateFitness();
         }
         return this.fitness;
+    }
+
+    public boolean isFitnessReady() {
+        return fitnessReady;
     }
 
     public void setFitness(float fitness) {
@@ -79,12 +84,19 @@ public class Individual {
         this.presence = presence;
     }
 
-    public HashMap<Sequence, Integer> getMatches() {
+    public HashMap<Sequence, ArrayList<Integer>> getMatches() {
         return matches;
     }
 
     public void addMatch(Sequence s, int init) {
-        matches.put(s, init);
+        if (matches.containsKey(s)) {
+            matches.get(s).add(init);
+        } else {
+            ArrayList<Integer> temp = new ArrayList<>();
+            temp.add(init);
+            matches.put(s, temp);
+        }
+        //matches.put(s, init);
         this.changed = true;
         this.fitnessReady = false;
     }
@@ -95,8 +107,15 @@ public class Individual {
     }
 
     public float pwm(String subSeq) {
-
         float[] count = {0, 0, 0, 0};
+        if (matches.isEmpty()) {
+            //return 0;
+            count[0] = (float) 0.25;
+            count[1] = (float) 0.25;
+            count[2] = (float) 0.25;
+            count[3] = (float) 0.25;
+        }
+
         int maxSize = 0;
         for (Sequence s : this.matches.keySet()) {
             for (int i = 0; i < 4; i++) {
@@ -105,25 +124,51 @@ public class Individual {
             maxSize += s.lenght();
         }
 
-        float[][] m = matrix();
-        for (char c : subSeq.toCharArray()) {
-            switch (c) {
-                case ('A'):
-                    count[0]--;
-                    break;
-                case ('C'):
-                    count[1]--;
-                    break;
-                case ('T'):
-                    count[2]--;
-                    break;
-                case ('G'):
-                    count[3]--;
-                    break;
+        for (Sequence s : this.matches.keySet()) {
+            for (Integer init : matches.get(s)) {
+                for (char c : s.getSubSequence(init, this.sequence.length()).toCharArray()) {
+                    switch (c) {
+                        case ('A'):
+                            count[0]--;
+                            break;
+                        case ('C'):
+                            count[1]--;
+                            break;
+                        case ('T'):
+                            count[2]--;
+                            break;
+                        case ('G'):
+                            count[3]--;
+                            break;
+                    }
+                    maxSize--;
+                }
             }
         }
-        for (int i = 0; i < 4; i++) {
-            count[i] /= (maxSize - sequence.length());
+
+        float[][] m = matrix();
+        if (!matches.isEmpty()) {
+
+            for (char c : subSeq.toCharArray()) {
+                switch (c) {
+                    case ('A'):
+                        count[0]--;
+                        break;
+                    case ('C'):
+                        count[1]--;
+                        break;
+                    case ('T'):
+                        count[2]--;
+                        break;
+                    case ('G'):
+                        count[3]--;
+                        break;
+                }
+                maxSize--;
+            }
+            for (int i = 0; i < 4; i++) {
+                count[i] /= (maxSize);
+            }
         }
         /*for (int i = 0; i < sequence.length(); i++) {
          for (int j = 0; j < 4; j++) {
@@ -169,7 +214,7 @@ public class Individual {
 
             for (int i = 0; i < sequence.length(); i++) {
                 for (int j = 0; j < 4; j++) {
-                    pwmMatrix[j][i] = (float) 0.01;
+                    pwmMatrix[j][i] = (float) 0.001;
                 }
             }
 
@@ -195,27 +240,35 @@ public class Individual {
             for (int i = 0; i < sequence.length(); i++) {
                 for (Sequence key : matches.keySet()) {
 
-                    int init = matches.get(key);
-                    switch (key.getSubSequence(init, sequence.length()).charAt(
-                            i)) {
-                        case ('A'):
-                            pwmMatrix[0][i]++;
-                            break;
-                        case ('C'):
-                            pwmMatrix[1][i]++;
-                            break;
-                        case ('T'):
-                            pwmMatrix[2][i]++;
-                            break;
-                        case ('G'):
-                            pwmMatrix[3][i]++;
-                            break;
+                    //int init = matches.get(key);
+                    for (Integer init : matches.get(key)) {
+                        switch (key.getSubSequence(init, sequence.length()).charAt(
+                                i)) {
+                            case ('A'):
+                                pwmMatrix[0][i]++;
+                                break;
+                            case ('C'):
+                                pwmMatrix[1][i]++;
+                                break;
+                            case ('T'):
+                                pwmMatrix[2][i]++;
+                                break;
+                            case ('G'):
+                                pwmMatrix[3][i]++;
+                                break;
+                        }
                     }
                 }
             }
+            int size = 0;
+            for(ArrayList<Integer> t : matches.values()){
+                size += t.size();
+            }
+            
             for (int i = 0; i < sequence.length(); i++) {
                 for (int j = 0; j < 4; j++) {
-                    pwmMatrix[j][i] /= (matches.size() + 1.04);
+                    //pwmMatrix[j][i] /= (matches.size() + 1.004);
+                    pwmMatrix[j][i] /= (size + 1.004);
                 }
             }
             changed = false;
@@ -253,7 +306,7 @@ public class Individual {
 
     @Override
     public String toString() {
-        return "[fitness=" + getFitness()+ ", seq="
+        return "[fitness=" + getFitness() + ", seq="
                 + consensus() + ",rev=" + Util.reverse(consensus()) + ", ocor=" + presence + "]";
         //+ sequence + ",rev=" + Util.reverse(consensus()) + ", ocor=" + presence + "]";
     }
@@ -340,7 +393,7 @@ public class Individual {
                     indexWorst = j;
                 }
             }
-            f= 2;
+            f = 2;
             for (int j = 0; j < 4; j++) {
                 if (j != indexWorst) {
                     if (m[j][i] < f) {
@@ -382,6 +435,7 @@ public class Individual {
         if (matches.isEmpty()) {
             return 1;
         }
+        //System.out.println("oi");
         temp = this.pwm(this.consensus());
         //temp = this.pwm(this.sequence);
         /*for (Sequence seq : matches.keySet()) {
@@ -394,27 +448,25 @@ public class Individual {
          */
 
         /*String s = worstMatch(10);
-        System.out.println(consensus() + " " + pwm(consensus())
-                + " " + worstMatch() + " " + pwm(worstMatch())
-                + " " + s + " " + pwm(s));*/
-
+         System.out.println(consensus() + " " + pwm(consensus())
+         + " " + worstMatch() + " " + pwm(worstMatch())
+         + " " + s + " " + pwm(s));*/
         /*double dec = 1, w = 0.2, re;
-        double wm = pwm(worstMatch());
-        for (int i = 1; i < matches.size() - 1; i++) {
-            double swm = pwm(worstMatch(i));
-            re = (wm - swm) / swm;
-            dec *= (1 + (w * re));
-        }*/
-
-        temp = ((float) temp - ((3 * this.sequence.length()) / (matches.size())));
+         double wm = pwm(worstMatch());
+         for (int i = 1; i < matches.size() - 1; i++) {
+         double swm = pwm(worstMatch(i));
+         re = (wm - swm) / swm;
+         dec *= (1 + (w * re));
+         }*/
+        //temp = ((float) temp - ((3 * this.sequence.length()) / (matches.size())));
+        temp = ((float) temp - ((3 * Population.getInstance().getNumSequences()) / (matches.size())));
         //temp = (temp / matches.size()) - ((3 * this.sequence.length()) / (matches.size()));
-        
+
         //System.out.println(dec);
         //temp *= dec;
         //System.out.println(temp);
-        
         fitnessReady = true;
-        
+
         if (temp < 1) {
             return 1;
         } else {
@@ -435,31 +487,34 @@ public class Individual {
             // writer = new PrintWriter("output.txt", "UTF-8");
 
             output.write("Motif:\t" + sequence + "| Fitness: "
-                    + this.getFitness()+ "\n");
+                    + this.getFitness() + "\n");
             output.write("Consensus:\t" + this.consensus() + " | " + Util.reverse(this.consensus()) + "\n");
             output.write("Matches:\n");
 
             int seqN = 0;
             for (Sequence seq : matches.keySet()) {
-                String m = seq.getSubSequence(matches.get(seq),
-                        this.sequence.length());
-                output.write(seqN++ + ".\t");
-                String con = this.consensus();
-                for (int i = 0; i < m.length(); i++) {
-                    // if (m.charAt(i) == this.sequence.charAt(i)) {
+                for (Integer init : matches.get(seq)) {
+                    //String m = seq.getSubSequence(matches.get(seq),this.sequence.length());
+                    String m = seq.getSubSequence(init, this.sequence.length());
+                    output.write(seqN++ + ".\t");
+                    String con = this.consensus();
+                    for (int i = 0; i < m.length(); i++) {
+                        // if (m.charAt(i) == this.sequence.charAt(i)) {
 
-                    if (m.charAt(i) == con.charAt(i)) {
-                        output.write((m.charAt(i) + "").toUpperCase());
-                    } else {
-                        output.write((m.charAt(i) + "").toLowerCase());
+                        if (m.charAt(i) == con.charAt(i)) {
+                            output.write((m.charAt(i) + "").toUpperCase());
+                        } else {
+                            output.write((m.charAt(i) + "").toLowerCase());
+                        }
                     }
+                    output.write(" | "
+                            // + Population.getInstance().find(this.sequence, m)
+                            + this.pwm(m) + " | "
+                            //+ Population.getInstance().similarity(con, m) * 100
+                            + Util.similarity(this, m) * 100
+                            + "% | " + seq.getName() + " (" + init
+                            + ")\n");
                 }
-                output.write(" | "
-                        // + Population.getInstance().find(this.sequence, m)
-                        + this.pwm(m) + " | "
-                        + Population.getInstance().similarity(con, m) * 100
-                        + "% | " + seq.getName() + " (" + matches.get(seq)
-                        + ")\n");
             }
             float[][] m = matrix();
             for (int j = 0; j < 4; j++) {
