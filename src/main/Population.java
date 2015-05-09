@@ -14,6 +14,7 @@ public class Population {
     private ArrayList<Individual> individuals = new ArrayList<>();
     private double thresholdComparison = 0.7;
     private boolean searchOnReverse = true;
+    private boolean oneOccurence = true;
 
     public Population() {
         this.individuals = new ArrayList<>();
@@ -277,6 +278,14 @@ public class Population {
 
     public void setSearchOnReverse(boolean searchOnReverse) {
         this.searchOnReverse = searchOnReverse;
+    }
+
+    public boolean isOneOccurence() {
+        return oneOccurence;
+    }
+
+    public void setOneOccurence(boolean oneOccurence) {
+        this.oneOccurence = oneOccurence;
     }
 
 }

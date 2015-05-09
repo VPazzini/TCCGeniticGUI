@@ -77,7 +77,11 @@ public class Individual {
     }
 
     public int getPresence() {
-        return presence;
+        int p = 0;
+        for (ArrayList<Integer> a : matches.values()) {
+            p += a.size();
+        }
+        return p;
     }
 
     public void setPresence(int presence) {
@@ -90,6 +94,25 @@ public class Individual {
 
     public void addMatch(Sequence s, int init) {
         if (matches.containsKey(s)) {
+            int motifLength = sequence.length();
+            boolean b = false;
+            for (Integer i : matches.get(s)) {
+                if (init > i && init < i + motifLength) {
+                    b = true;
+                }
+                if (init + motifLength > i && init + motifLength < i + motifLength) {
+                    b = true;
+                }
+                if (b) {
+                    if (pwm(s.getSubSequence(i, motifLength)) > pwm(s.getSubSequence(init, motifLength))) {
+                        return;
+                    } else {
+                        matches.get(s).remove(i);
+                        break;
+                    }
+                }
+            }
+
             matches.get(s).add(init);
         } else {
             ArrayList<Integer> temp = new ArrayList<>();
@@ -261,10 +284,10 @@ public class Individual {
                 }
             }
             int size = 0;
-            for(ArrayList<Integer> t : matches.values()){
+            for (ArrayList<Integer> t : matches.values()) {
                 size += t.size();
             }
-            
+
             for (int i = 0; i < sequence.length(); i++) {
                 for (int j = 0; j < 4; j++) {
                     //pwmMatrix[j][i] /= (matches.size() + 1.004);
@@ -307,7 +330,7 @@ public class Individual {
     @Override
     public String toString() {
         return "[fitness=" + getFitness() + ", seq="
-                + consensus() + ",rev=" + Util.reverse(consensus()) + ", ocor=" + presence + "]";
+                + consensus() + ",rev=" + Util.reverse(consensus()) + ", ocor=" + getPresence() + "]";
         //+ sequence + ",rev=" + Util.reverse(consensus()) + ", ocor=" + presence + "]";
     }
 
@@ -489,7 +512,7 @@ public class Individual {
             output.write("Motif:\t" + sequence + "| Fitness: "
                     + this.getFitness() + "\n");
             output.write("Consensus:\t" + this.consensus() + " | " + Util.reverse(this.consensus()) + "\n");
-            output.write("Matches:\n");
+            output.write(getPresence() + " Matches:\n");
 
             int seqN = 0;
             for (Sequence seq : matches.keySet()) {

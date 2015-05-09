@@ -32,7 +32,7 @@ public class Sequence {
     public float findInSequence(Individual ind, boolean verbose) {
         float match1 = 0, match2 = 0, temp = -9999, find1, find2;
         double threshold = Population.getInstance().getThresholdComparison();
-        String subSeq = "", tempSeq = "";
+        String subSeq = "";
         //String motif = ind.getSequence();
         String motif = ind.consensus();
         //String motif = ind.getSequence();
@@ -65,42 +65,30 @@ public class Sequence {
             }
 
             if (match1 >= threshold) {
-
                 if (find1 > temp && find1 >= find2) {
                     temp = find1;
-                    /*if (ind.getMatches().isEmpty()) {
-                        temp = match1;
-                    }*/
-                    //temp2 = find3;
-                    tempSeq = subSeq;
                     initSeq = i + 1;
                 }
-                /*if (find1 >= find2 && find1 >= threshold*10) {
-                    ind.setPresence(ind.getPresence() + 1);
-                    ind.addMatch(this, i + 1);
-                }*/
+                if (!Population.getInstance().isOneOccurence() && find1 >= find2 && find1 >= threshold * 10) {
+                    //ind.setPresence(ind.getPresence() + 1);
+                    ind.addMatch(this, (i + 1));
+                }
             }
             if (match2 >= threshold) {
-
                 if (find2 > temp && find2 > find1) {
                     temp = find2;
-                    /*if (ind.getMatches().isEmpty()) {
-                        temp = match2;
-                    }*/
-                    //temp2 = find4;
-                    tempSeq = Util.reverse(subSeq);
                     initSeq = -(i + 1);
                 }
-                /*if (find2 > find1 && find2 >= threshold*10) {
-                    ind.setPresence(ind.getPresence() + 1);
+                if (!Population.getInstance().isOneOccurence() && find2 > find1 && find2 >= threshold * 10) {
+                    //ind.setPresence(ind.getPresence() + 1);
                     ind.addMatch(this, -(i + 1));
-                }*/
+                }
             }
         }
         //System.out.println(temp);
-        //if (temp > -9999) {
-        if (temp > 0) {
-            ind.setPresence(ind.getPresence() + 1);
+        if (Population.getInstance().isOneOccurence() && temp > -9999) {
+            //if (temp > 0) {
+            // ind.setPresence(ind.getPresence() + 1);
             ind.addMatch(this, initSeq);
         }
         return temp;

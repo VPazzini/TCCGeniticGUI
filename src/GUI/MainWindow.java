@@ -89,7 +89,8 @@ public class MainWindow extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList();
         jButtonSaveToFile = new javax.swing.JButton();
-        jCheckBox1 = new javax.swing.JCheckBox();
+        jCheckBoxReverseSearch = new javax.swing.JCheckBox();
+        jCheckBoxOneOcurrence = new javax.swing.JCheckBox();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
@@ -180,11 +181,19 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
-        jCheckBox1.setSelected(true);
-        jCheckBox1.setText("Search Reverse Seq");
-        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+        jCheckBoxReverseSearch.setSelected(true);
+        jCheckBoxReverseSearch.setText("Search Reverse Seq");
+        jCheckBoxReverseSearch.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox1ActionPerformed(evt);
+                jCheckBoxReverseSearchActionPerformed(evt);
+            }
+        });
+
+        jCheckBoxOneOcurrence.setSelected(true);
+        jCheckBoxOneOcurrence.setText("One Ocurrence per Seq");
+        jCheckBoxOneOcurrence.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBoxOneOcurrenceActionPerformed(evt);
             }
         });
 
@@ -210,22 +219,23 @@ public class MainWindow extends javax.swing.JFrame {
                                     .addComponent(jSpinnerPopulationSize, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
                                     .addComponent(jSpinnerGenerations))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(jLabel17, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
                                     .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jSpinnerSurvivors, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE)
+                                    .addComponent(jSpinnerComparisonThreshold)))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jComboBoxPopulationMethod, javax.swing.GroupLayout.Alignment.LEADING, 0, 160, Short.MAX_VALUE)
-                                    .addComponent(jComboBoxSelectionMethod, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGap(36, 36, 36)))
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jSpinnerSurvivors)
-                            .addComponent(jSpinnerComparisonThreshold)
-                            .addComponent(jCheckBox1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(0, 0, Short.MAX_VALUE))
+                                    .addComponent(jComboBoxPopulationMethod, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jComboBoxSelectionMethod, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jCheckBoxOneOcurrence, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jCheckBoxReverseSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING)
@@ -275,11 +285,12 @@ public class MainWindow extends javax.swing.JFrame {
                     .addComponent(jSpinnerGenerations, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel14)
                     .addComponent(jComboBoxPopulationMethod, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jCheckBox1))
+                    .addComponent(jCheckBoxReverseSearch))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jComboBoxCrossOverMethod, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBoxSelectionMethod, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jComboBoxSelectionMethod, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jCheckBoxOneOcurrence))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextFieldFilePath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -439,9 +450,13 @@ public class MainWindow extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButtonSaveToFileActionPerformed
 
-    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
-        Population.getInstance().setSearchOnReverse(jCheckBox1.isSelected());
-    }//GEN-LAST:event_jCheckBox1ActionPerformed
+    private void jCheckBoxReverseSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxReverseSearchActionPerformed
+        Population.getInstance().setSearchOnReverse(jCheckBoxReverseSearch.isSelected());
+    }//GEN-LAST:event_jCheckBoxReverseSearchActionPerformed
+
+    private void jCheckBoxOneOcurrenceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxOneOcurrenceActionPerformed
+        Population.getInstance().setOneOccurence(jCheckBoxOneOcurrence.isSelected());
+    }//GEN-LAST:event_jCheckBoxOneOcurrenceActionPerformed
 
     public void attGeneration(ArrayList<Individual> list) {
         DefaultListModel listModel = new DefaultListModel();
@@ -512,7 +527,8 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JButton jButtonMotifFile;
     private javax.swing.JButton jButtonRun;
     private javax.swing.JButton jButtonSaveToFile;
-    private javax.swing.JCheckBox jCheckBox1;
+    private javax.swing.JCheckBox jCheckBoxOneOcurrence;
+    private javax.swing.JCheckBox jCheckBoxReverseSearch;
     private javax.swing.JComboBox jComboBoxCrossOverMethod;
     private javax.swing.JComboBox jComboBoxPopulationMethod;
     private javax.swing.JComboBox jComboBoxSelectionMethod;

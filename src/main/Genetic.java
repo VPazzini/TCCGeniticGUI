@@ -39,7 +39,7 @@ public class Genetic implements Runnable {
                 line = line.toUpperCase().trim();
                 if (line.length() > 0) {
                     char c = line.charAt(0);
-                    if (c == 'A' || c == 'C' || c == 'T' || c == 'G') {
+                    if (c == 'A' || c == 'C' || c == 'T' || c == 'G' || c == 'N') {
                         tempSequence += line.trim();
                     } else if (c == '>') {
                         if (!seqName.equals("")) {
