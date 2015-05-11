@@ -497,6 +497,50 @@ public class Individual {
         }
     }
 
+    public String individualOutput() {
+        String s = "";
+        s += ("Motif:\t" + sequence + "| Fitness: "
+                + this.getFitness() + "\n");
+        s += ("Consensus:\t" + this.consensus() + " | " + Util.reverse(this.consensus()) + "\n");
+        s += (getPresence() + " Matches:\n");
+
+        int seqN = 0;
+        for (Sequence seq : matches.keySet()) {
+            for (Integer init : matches.get(seq)) {
+                //String m = seq.getSubSequence(matches.get(seq),this.sequence.length());
+                String m = seq.getSubSequence(init, this.sequence.length());
+                s += (seqN++ + ".\t");
+                String con = this.consensus();
+                for (int i = 0; i < m.length(); i++) {
+                    // if (m.charAt(i) == this.sequence.charAt(i)) {
+
+                    if (m.charAt(i) == con.charAt(i)) {
+                        s += ((m.charAt(i) + "").toUpperCase());
+                    } else {
+                        s += ((m.charAt(i) + "").toLowerCase());
+                    }
+                }
+                s += (" | "
+                        // + Population.getInstance().find(this.sequence, m)
+                        + this.pwm(m) + " | "
+                        //+ Population.getInstance().similarity(con, m) * 100
+                        + Util.similarity(this, m) * 100
+                        + "% | " + seq.getName() + " (" + init
+                        + ")\n");
+            }
+        }
+        float[][] m = matrix();
+        for (int j = 0; j < 4; j++) {
+            s += (nucleotides[j] + " ");
+            for (int i = 0; i < sequence.length(); i++) {
+                s += (String.format("%.4f  ", m[j][i]));
+            }
+            s += ("\n");
+        }
+        s += ("--------------------------------------------------------\n");
+        return s;
+    }
+
     public void writeToFile(File f) {
         BufferedWriter output = null;
         try {

@@ -69,7 +69,7 @@ public class Sequence {
                     temp = find1;
                     initSeq = i + 1;
                 }
-                if (!Population.getInstance().isOneOccurence() && find1 >= find2 && find1 >= threshold * 10) {
+                if (!Population.getInstance().isOneOccurence() && find1 >= find2 && find1 >= threshold * motif.length()) {
                     //ind.setPresence(ind.getPresence() + 1);
                     ind.addMatch(this, (i + 1));
                 }
@@ -79,7 +79,7 @@ public class Sequence {
                     temp = find2;
                     initSeq = -(i + 1);
                 }
-                if (!Population.getInstance().isOneOccurence() && find2 > find1 && find2 >= threshold * 10) {
+                if (!Population.getInstance().isOneOccurence() && find2 > find1 && find2 >= threshold * motif.length()) {
                     //ind.setPresence(ind.getPresence() + 1);
                     ind.addMatch(this, -(i + 1));
                 }

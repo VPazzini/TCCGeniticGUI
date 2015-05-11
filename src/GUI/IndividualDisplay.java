@@ -1,5 +1,8 @@
 package GUI;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import main.Individual;
 import main.Sequence;
 import main.Util;
@@ -28,6 +31,11 @@ public class IndividualDisplay extends javax.swing.JFrame {
         this.setVisible(true);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
+        String myString = ind.individualOutput();
+        StringSelection stringSelection = new StringSelection(myString);
+        Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clpbrd.setContents(stringSelection, null);
 
     }
 
