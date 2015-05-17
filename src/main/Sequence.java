@@ -28,10 +28,14 @@ public class Sequence {
             }
         }
     }
-
-    public float findInSequence(Individual ind, boolean verbose) {
-        float match1 = 0, match2 = 0, temp = -9999, find1, find2;
-        double threshold = Population.getInstance().getThresholdComparison();
+    
+    Population pop = null;
+    public double findInSequence(Individual ind, boolean verbose) {
+        double match1 = 0, match2 = 0, temp = -9999, find1, find2;
+        if(pop ==null){
+            pop = Population.getInstance();
+        }
+        double threshold = pop.getThresholdComparison();
         String subSeq = "";
         //String motif = ind.getSequence();
         String motif = ind.consensus();
@@ -43,7 +47,7 @@ public class Sequence {
             //match1 = similarity(motif, subSeq);
             match1 = similarity(ind, subSeq);
 
-            if (Population.getInstance().isSearchOnReverse()) {
+            if (pop.isSearchOnReverse()) {
                 //match2 = similarity(Util.reverse(motif), subSeq);
                 match2 = similarity(ind, Util.reverse(subSeq));
             }
@@ -69,7 +73,7 @@ public class Sequence {
                     temp = find1;
                     initSeq = i + 1;
                 }
-                if (!Population.getInstance().isOneOccurence() && find1 >= find2 && find1 >= threshold * motif.length()) {
+                if (!pop.isOneOccurence() && find1 >= find2 && find1 >= threshold * motif.length()) {
                     //ind.setPresence(ind.getPresence() + 1);
                     ind.addMatch(this, (i + 1));
                 }
@@ -79,14 +83,14 @@ public class Sequence {
                     temp = find2;
                     initSeq = -(i + 1);
                 }
-                if (!Population.getInstance().isOneOccurence() && find2 > find1 && find2 >= threshold * motif.length()) {
+                if (!pop.isOneOccurence() && find2 > find1 && find2 >= threshold * motif.length()) {
                     //ind.setPresence(ind.getPresence() + 1);
                     ind.addMatch(this, -(i + 1));
                 }
             }
         }
         //System.out.println(temp);
-        if (Population.getInstance().isOneOccurence() && temp > -9999) {
+        if (pop.isOneOccurence() && temp > -9999) {
             //if (temp > 0) {
             // ind.setPresence(ind.getPresence() + 1);
             ind.addMatch(this, initSeq);
@@ -107,12 +111,12 @@ public class Sequence {
         return match / motif.length();
     }
 
-    public float similarity(Individual ind, String seq) {
+    public double similarity(Individual ind, String seq) {
         if (ind.getSequence().length() != seq.length()) {
             return 0;
         }
         float match = 0;
-        float[][] m = ind.matrix();
+        double[][] m = ind.matrix();
         for (int i = 0; i < seq.length(); i++) {
             switch (seq.charAt(i)) {
                 case ('A'):

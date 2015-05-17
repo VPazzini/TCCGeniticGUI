@@ -88,12 +88,12 @@ public class Util {
         return match / motif.length();
     }
     
-    public static float similarity(Individual ind, String seq) {
+    public static double similarity(Individual ind, String seq) {
         if (ind.getSequence().length() != seq.length()) {
             return 0;
         }
-        float match = 0;
-        float[][] m = ind.matrix();
+        double match = 0;
+        double[][] m = ind.matrix();
         for (int i = 0; i < seq.length(); i++) {
             switch (seq.charAt(i)) {
                 case ('A'):

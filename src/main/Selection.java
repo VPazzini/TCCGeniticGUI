@@ -17,12 +17,16 @@ public class Selection {
         int selected;
         Random r = new Random();
         for (Individual ind : Population.getInstance().getPopulation()) {
-            if(!ind.getMatches().isEmpty()){
+            if (!ind.getMatches().isEmpty()) {
                 totalFitness += Math.abs(this.getFitnessMethod(ind));
             }
         }
-
-        selected = r.nextInt(totalFitness);
+        try {
+            selected = r.nextInt(totalFitness);
+        } catch (Exception e) {
+            System.out.println(e.getMessage()+ ":" + totalFitness );
+            return randomSelection();
+        }
 
         for (Individual ind : Population.getInstance().getPopulation()) {
             temp += Math.abs(this.getFitnessMethod(ind));
@@ -37,7 +41,7 @@ public class Selection {
 
     private float getFitnessMethod(Individual ind) {
         return ind.getFitness();
-		//return (ind.getFitness() * (ind.getPresence() + 1));
+        //return (ind.getFitness() * (ind.getPresence() + 1));
         //return ind.getFitness() * ind.getFitness() * ind.getFitness();
         //return ind.getFitness() * ind.getFitness();
     }

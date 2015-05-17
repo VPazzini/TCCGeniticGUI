@@ -14,10 +14,12 @@ import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
+import main.Generator;
 import main.Genetic;
 import main.Individual;
 import main.Population;
 import main.Sequence;
+import main.ValidateResult;
 
 public class MainWindow extends javax.swing.JFrame {
 
@@ -36,6 +38,8 @@ public class MainWindow extends javax.swing.JFrame {
             jTextFieldFilePath.setText(f.listFiles()[0].getAbsolutePath());
         } catch (Exception e) {
         }
+        jTextFieldFilePath.setText(new File("benchmark.fasta").getAbsolutePath());
+        jTextFieldCompareFile.setText(new File("motif.fasta").getAbsolutePath());
 
         MouseListener mouseListener;
         mouseListener = new MouseAdapter() {
@@ -91,6 +95,8 @@ public class MainWindow extends javax.swing.JFrame {
         jButtonSaveToFile = new javax.swing.JButton();
         jCheckBoxReverseSearch = new javax.swing.JCheckBox();
         jCheckBoxOneOcurrence = new javax.swing.JCheckBox();
+        jTextFieldCompareFile = new javax.swing.JTextField();
+        jButtonCompareFile = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
@@ -100,7 +106,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         jLabel2.setText("Motif Size");
 
-        jSpinnerMotifSize.setModel(new javax.swing.SpinnerNumberModel(11, 1, 1000, 1));
+        jSpinnerMotifSize.setModel(new javax.swing.SpinnerNumberModel(16, 1, 1000, 1));
 
         jLabel13.setText("Population Size");
 
@@ -197,6 +203,13 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
+        jButtonCompareFile.setText("Compare File");
+        jButtonCompareFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCompareFileActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -237,11 +250,16 @@ public class MainWindow extends javax.swing.JFrame {
                                     .addComponent(jCheckBoxOneOcurrence, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jCheckBoxReverseSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextFieldMotifFilePath)
-                            .addComponent(jTextFieldFilePath, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE))
-                        .addGap(6, 6, 6)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jTextFieldMotifFilePath)
+                                    .addComponent(jTextFieldFilePath, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE))
+                                .addGap(6, 6, 6))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jTextFieldCompareFile)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -259,7 +277,8 @@ public class MainWindow extends javax.swing.JFrame {
                             .addComponent(jButtonFastaFile, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jButtonMotifFile, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jButtonRun, javax.swing.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
-                            .addComponent(jButtonSaveToFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(jButtonSaveToFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButtonCompareFile, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
 
@@ -300,6 +319,10 @@ public class MainWindow extends javax.swing.JFrame {
                     .addComponent(jTextFieldMotifFilePath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButtonMotifFile))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextFieldCompareFile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonCompareFile))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -317,11 +340,11 @@ public class MainWindow extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabelPopSize)
                             .addComponent(jLabel4))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 163, Short.MAX_VALUE)
                         .addComponent(jButtonSaveToFile)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButtonRun))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 261, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2))
                 .addContainerGap())
         );
 
@@ -348,45 +371,77 @@ public class MainWindow extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRunActionPerformed
+
         if (jButtonRun.getText().equals("Run")) {
+            for (int i = 0; i < 1; i++) {
+                System.out.println("Test " + i);
+                Generator gene = new Generator();
+                gene.generate(16, 20, 500, false, false);
 
+                jButtonSaveToFile.setVisible(false);
 
-            jButtonSaveToFile.setVisible(false);
+                g = new Genetic();
 
-            g = new Genetic();
+                if (jTextFieldFilePath.getText().length() == 0) {
+                    JOptionPane.showMessageDialog(this, "Please enter a fasta file");
+                    return;
+                }
 
-            if (jTextFieldFilePath.getText().length() == 0) {
-                JOptionPane.showMessageDialog(this, "Please enter a fasta file");
-                return;
+                /*for (String s : jTextFieldFilePath.getText().split(";")) {
+                 g.readFile(s);
+                 }*/
+                g.readFile(jTextFieldFilePath.getText().split(";")[0]);
+
+                g.setUp((int) jSpinnerGenerations.getValue(), (int) jSpinnerPopulationSize.getValue(),
+                        (int) jSpinnerMotifSize.getValue(), (int) jComboBoxPopulationMethod.getSelectedIndex(),
+                        jTextFieldMotifFilePath.getText().split(";")[0],
+                        (double) jSpinnerSurvivors.getValue(), (int) jComboBoxSelectionMethod.getSelectedIndex(),
+                        this, jTextFieldCompareFile.getText().split(";")[0]);
+
+                /*System.out.println(jTextFieldFilePath.getText().split(";")[0] + "\n"+
+                 jTextFieldMotifFilePath.getText().split(";")[0] + "\n" +
+                 jTextFieldCompareFile.getText().split(";")[0]);*/
+                this.jLabelSequences.setText(g.getSequences().size() + "");
+                float size = 0;
+                for (Sequence s : g.getSequences()) {
+                    size += s.lenght();
+                }
+                size = size / g.getSequences().size();
+                this.jLabelMeanLenght.setText(size + "");
+
+                Population.getInstance().setThresholdComparison((double) jSpinnerComparisonThreshold.getValue());
+
+                t = new Thread(g);
+                t.start();
+                //g.run();
+
+                jButtonRun.setText("Stop");
+                /*String t = jTextFieldCompareFile.getText().substring(jTextFieldCompareFile.getText().indexOf(";") + 1);
+                 this.jTextFieldCompareFile.setText(t);
+                 t = jTextFieldFilePath.getText().substring(jTextFieldFilePath.getText().indexOf(";") + 1);
+                 this.jTextFieldFilePath.setText(t);
+                 t = jTextFieldMotifFilePath.getText().substring(jTextFieldMotifFilePath.getText().indexOf(";") + 1);
+                 this.jTextFieldMotifFilePath.setText(t);
+
+                 if (t.length() < 2) {
+                 break;
+                 }*/
+
+            }
+            try {
+                File file = new File("results.txt");
+                BufferedWriter output = new BufferedWriter(new FileWriter(file, true));
+                output.write("-----------------------------------------------------------\n");
+                output.close();
+            } catch (IOException ex) {
+                Logger.getLogger(ValidateResult.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            for (String s : jTextFieldFilePath.getText().split(";")) {
-                g.readFile(s);
-            }
-
-            g.setUp((int) jSpinnerGenerations.getValue(), (int) jSpinnerPopulationSize.getValue(),
-                    (int) jSpinnerMotifSize.getValue(), (int) jComboBoxPopulationMethod.getSelectedIndex(),
-                    jTextFieldMotifFilePath.getText(),
-                    (double) jSpinnerSurvivors.getValue(), (int) jComboBoxSelectionMethod.getSelectedIndex(),
-                    this);
-
-            this.jLabelSequences.setText(g.getSequences().size() + "");
-            float size = 0;
-            for (Sequence s : g.getSequences()) {
-                size += s.lenght();
-            }
-            size = size / g.getSequences().size();
-            this.jLabelMeanLenght.setText(size + "");
-
-            Population.getInstance().setThresholdComparison((double) jSpinnerComparisonThreshold.getValue());
-
-            t = new Thread(g);
-            t.start();
-
-            jButtonRun.setText("Stop");
         } else {
-            if (t.isAlive()) {
-                t.stop();
+            if (t != null) {
+                if (t.isAlive()) {
+                    t.stop();
+                }
             }
             jButtonRun.setText("Run");
         }
@@ -414,9 +469,15 @@ public class MainWindow extends javax.swing.JFrame {
     private void jButtonMotifFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonMotifFileActionPerformed
         JFileChooser fileChooser = new JFileChooser((new File("")).getAbsoluteFile());
 
+        fileChooser.setMultiSelectionEnabled(true);
         if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-            this.jTextFieldMotifFilePath.setText(fileChooser.getSelectedFile().toString());
+            String s = "";
+            for (File f : fileChooser.getSelectedFiles()) {
+                s += f.getAbsolutePath() + ";";
+            }
+            this.jTextFieldMotifFilePath.setText(s);
         }
+
     }//GEN-LAST:event_jButtonMotifFileActionPerformed
 
     private void jButtonSaveToFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveToFileActionPerformed
@@ -458,6 +519,20 @@ public class MainWindow extends javax.swing.JFrame {
         Population.getInstance().setOneOccurence(jCheckBoxOneOcurrence.isSelected());
     }//GEN-LAST:event_jCheckBoxOneOcurrenceActionPerformed
 
+    private void jButtonCompareFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCompareFileActionPerformed
+        JFileChooser fileChooser = new JFileChooser((new File("")).getAbsoluteFile());
+
+        fileChooser.setMultiSelectionEnabled(true);
+        if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            String s = "";
+            for (File f : fileChooser.getSelectedFiles()) {
+                s += f.getAbsolutePath() + ";";
+            }
+            this.jTextFieldCompareFile.setText(s);
+        }
+
+    }//GEN-LAST:event_jButtonCompareFileActionPerformed
+
     public void attGeneration(ArrayList<Individual> list) {
         DefaultListModel listModel = new DefaultListModel();
         list.stream().forEach((ind) -> {
@@ -471,7 +546,7 @@ public class MainWindow extends javax.swing.JFrame {
     }
 
     public void finished() {
-        JOptionPane.showMessageDialog(this, "Computation Finished");
+        //JOptionPane.showMessageDialog(this, "Computation Finished");
 
         File f = new File(jTextFieldFilePath.getText().split(";")[0]);
         String path = (new File("")).getAbsoluteFile() + "/output/" + f.getName() + "/";
@@ -523,6 +598,7 @@ public class MainWindow extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonCompareFile;
     private javax.swing.JButton jButtonFastaFile;
     private javax.swing.JButton jButtonMotifFile;
     private javax.swing.JButton jButtonRun;
@@ -556,6 +632,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JSpinner jSpinnerMotifSize;
     private javax.swing.JSpinner jSpinnerPopulationSize;
     private javax.swing.JSpinner jSpinnerSurvivors;
+    private javax.swing.JTextField jTextFieldCompareFile;
     private javax.swing.JTextField jTextFieldFilePath;
     private javax.swing.JTextField jTextFieldMotifFilePath;
     // End of variables declaration//GEN-END:variables

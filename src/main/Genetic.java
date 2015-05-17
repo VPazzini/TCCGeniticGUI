@@ -22,6 +22,7 @@ public class Genetic implements Runnable {
     private MainWindow window;
     private Selection select;
     private CrossOver crossOver;
+    private String pathToCompareFile;
 
     public Genetic() {
         this.population = Population.getInstance();
@@ -59,9 +60,12 @@ public class Genetic implements Runnable {
                 sequences.add(new Sequence(seqName, tempSequence));
             }
             out.close();
+            
+            population.setNumSequences(sequences.size());
 
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("Error Reading fasta File: " + fileName);
+            System.out.println(e.getMessage());
             System.exit(0);
         }
     }
@@ -77,11 +81,11 @@ public class Genetic implements Runnable {
             while ((line = input.readLine()) != null) {
                 String inputSeq = line.trim();
                 if (inputSeq.length() > 0) {
-                    
-                    if(inputSeq.length() != motifSize){
+
+                    if (inputSeq.length() != motifSize) {
                         JOptionPane.showMessageDialog(window, "Sequences in the motif file doesn't match the "
                                 + "selected size on parameters.");
-                        
+
                         return inputPopulation;
                     }
                     inputPopulation.add(new Individual(line.trim()));
@@ -119,7 +123,7 @@ public class Genetic implements Runnable {
     }
 
     public void setUp(int maxGens, int size, int motifSize, int generateMethod, String pathToInputFile,
-            double survivors, int selectionMethod, MainWindow window) {
+            double survivors, int selectionMethod, MainWindow window, String pathToCompareFile) {
         this.maxGens = maxGens;
         this.size = size;
         this.motifSize = motifSize;
@@ -140,14 +144,20 @@ public class Genetic implements Runnable {
             }
         }
         if (!pathToInputFile.equals("")) {
-            if(new File(pathToInputFile).exists()){
+            if (new File(pathToInputFile).exists()) {
                 population.getPopulation().addAll(readPopulationFile(pathToInputFile));
-            }else{
-                for(String s:pathToInputFile.split(";")){
-                    if(s.length() == motifSize){
+            } else {
+                for (String s : pathToInputFile.split(";")) {
+                    if (s.length() == motifSize) {
                         population.getPopulation().add(new Individual(s));
                     }
                 }
+            }
+        }
+
+        if (!pathToCompareFile.equals("")) {
+            if (new File(pathToCompareFile).exists()) {
+                this.pathToCompareFile = pathToCompareFile;
             }
         }
 
@@ -245,6 +255,13 @@ public class Genetic implements Runnable {
 
         this.writeToFile();
         window.finished();
+
+        //val.compare(population.getPopulation().get(0), new File("D:\\workspace\\TCCGeneticGUI\\motif.fasta"));
+        if (pathToCompareFile!=null && !pathToCompareFile.equals("")) {
+            ValidateResult val = new ValidateResult();
+            //val.compareOne(population.getPopulation().get(0), new File(pathToCompareFile));
+            val.compareAll(population.getPopulation(), new File(pathToCompareFile));
+        }
 
     }
 

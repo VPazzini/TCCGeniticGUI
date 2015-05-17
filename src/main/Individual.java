@@ -130,7 +130,7 @@ public class Individual {
     }
 
     public float pwm(String subSeq) {
-        float[] count = {0, 0, 0, 0};
+        double[] count = {0.0, 0.0, 0.0, 0.0};
         if (matches.isEmpty()) {
             //return 0;
             count[0] = (float) 0.25;
@@ -169,7 +169,7 @@ public class Individual {
             }
         }
 
-        float[][] m = matrix();
+        double[][] m = matrix();
         if (!matches.isEmpty()) {
 
             for (char c : subSeq.toCharArray()) {
@@ -191,6 +191,9 @@ public class Individual {
             }
             for (int i = 0; i < 4; i++) {
                 count[i] /= (maxSize);
+                /*if(count[i] == 0){
+                 count[i] = 1;
+                 }*/
             }
         }
         /*for (int i = 0; i < sequence.length(); i++) {
@@ -231,7 +234,7 @@ public class Individual {
 
     }
 
-    public float[][] matrix() {
+    public double[][] matrix() {
         if (changed) {
             pwmMatrix = new float[4][sequence.length()];
 
@@ -296,7 +299,7 @@ public class Individual {
             }
             changed = false;
         }
-        float[][] temp = new float[4][sequence.length()];
+        double[][] temp = new double[4][sequence.length()];
         for (int i = 0; i < sequence.length(); i++) {
             for (int j = 0; j < 4; j++) {
                 temp[j][i] = pwmMatrix[j][i];
@@ -306,12 +309,12 @@ public class Individual {
     }
 
     public String consensus() {
-        float[][] m = matrix();
+        double[][] m = matrix();
         if (matches.isEmpty()) {
             return sequence;
         }
         String cons = "";
-        float max;
+        double max;
         int pos = 0;
         for (int i = 0; i < sequence.length(); i++) {
             max = 0;
@@ -369,9 +372,9 @@ public class Individual {
 
     public String worstMatch() {
         String s = "";
-        float f;
+        double f;
         int index = 0;
-        float[][] m = matrix();
+        double[][] m = matrix();
         for (int i = 0; i < sequence.length(); i++) {
             f = 2;
             for (int j = 0; j < 4; j++) {
@@ -402,12 +405,12 @@ public class Individual {
 
     public String worstMatch(int num) {
         String s = "";
-        float f;
+        double f;
         double n = num;
         int indexWorst = 0;
         int secondWorst = 0;
         int index;
-        float[][] m = matrix();
+        double[][] m = matrix();
         for (int i = 0; i < sequence.length(); i++) {
             f = 2;
             for (int j = 0; j < 4; j++) {
@@ -489,7 +492,6 @@ public class Individual {
         //temp *= dec;
         //System.out.println(temp);
         fitnessReady = true;
-
         if (temp < 1) {
             return 1;
         } else {
@@ -529,7 +531,7 @@ public class Individual {
                         + ")\n");
             }
         }
-        float[][] m = matrix();
+        double[][] m = matrix();
         for (int j = 0; j < 4; j++) {
             s += (nucleotides[j] + " ");
             for (int i = 0; i < sequence.length(); i++) {
@@ -583,7 +585,7 @@ public class Individual {
                             + ")\n");
                 }
             }
-            float[][] m = matrix();
+            double[][] m = matrix();
             for (int j = 0; j < 4; j++) {
                 output.write(nucleotides[j] + " ");
                 for (int i = 0; i < sequence.length(); i++) {

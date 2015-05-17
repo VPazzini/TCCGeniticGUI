@@ -63,12 +63,12 @@ public class CrossOver {
         Random r = new Random();
         String seq = "";
 
-        float[][] m1 = ind1.matrix();
-        float[][] m2 = ind1.matrix();
+        double[][] m1 = ind1.matrix();
+        double[][] m2 = ind1.matrix();
 
         for (int j = 0; j < ind1.getSequence().length(); j++) {
             char c1 = ' ';
-            float max1 = -1;
+            double max1 = -1.0;
             for (int i = 0; i < 4; i++) {
                 if (m1[i][j] > max1) {
                     max1 = m1[i][j];

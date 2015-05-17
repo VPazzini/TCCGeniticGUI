@@ -143,8 +143,8 @@ public class Population {
 
     public void findInAllSequences(ArrayList<Sequence> sequences,
             Individual ind, boolean verb) {
-        //if (!ind.isFitnessReady()) {
-        if (ind.getFitness() == 1) {
+        if (!ind.isFitnessReady()) {
+        //if (ind.getFitness() == 1) {
             for (Sequence seq : sequences) {
                 seq.findInSequence(ind, verb);
             }
@@ -153,10 +153,12 @@ public class Population {
     }
 
     public void calculateFitness(ArrayList<Sequence> sequences) {
-        this.numSequences = sequences.size();
-        IntStream.range(0, individuals.size()).parallel().forEach(i -> {
+        /*IntStream.range(0, individuals.size()).parallel().forEach(i -> {
             findInAllSequences(sequences, individuals.get(i), false);
-        });
+        });*/
+        for(int i=0;i<individuals.size();i++){
+            findInAllSequences(sequences, individuals.get(i), false);
+        }
 
         this.sort();
     }
@@ -262,6 +264,10 @@ public class Population {
 
     public int getNumSequences() {
         return this.numSequences;
+    }
+    
+    public void setNumSequences(int num){
+        this.numSequences = num;
     }
 
     public double getThresholdComparison() {
