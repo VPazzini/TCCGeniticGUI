@@ -259,8 +259,8 @@ public class Genetic implements Runnable {
         //val.compare(population.getPopulation().get(0), new File("D:\\workspace\\TCCGeneticGUI\\motif.fasta"));
         if (pathToCompareFile!=null && !pathToCompareFile.equals("")) {
             ValidateResult val = new ValidateResult();
-            //val.compareOne(population.getPopulation().get(0), new File(pathToCompareFile));
-            val.compareAll(population.getPopulation(), new File(pathToCompareFile));
+            val.compareOne(population.getPopulation().get(0), new File(pathToCompareFile));
+            //val.compareAll(population.getPopulation(), new File(pathToCompareFile));
         }
 
     }

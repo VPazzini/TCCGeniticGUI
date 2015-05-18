@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JList;
@@ -25,6 +26,11 @@ public class MainWindow extends javax.swing.JFrame {
 
     private Genetic g;
     private Thread t;
+    private int genSizeMotif = 16;
+    private int genNumSeqs = 20;
+    private int genSeqSize = 500;
+    private boolean genNoise = false;
+    private boolean genLowCons = false;
 
     public MainWindow() {
         initComponents();
@@ -56,6 +62,10 @@ public class MainWindow extends javax.swing.JFrame {
             }
         };
         jList1.addMouseListener(mouseListener);
+
+        ButtonGroup group = new ButtonGroup();
+        group.add(jRadioButtonSeveralTests);
+        group.add(jRadioButtonSingleTest);
 
     }
 
@@ -99,6 +109,10 @@ public class MainWindow extends javax.swing.JFrame {
         jButtonCompareFile = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
+        jMenu3 = new javax.swing.JMenu();
+        jRadioButtonSingleTest = new javax.swing.JRadioButtonMenuItem();
+        jRadioButtonSeveralTests = new javax.swing.JRadioButtonMenuItem();
+        jMenuItem1 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -349,6 +363,27 @@ public class MainWindow extends javax.swing.JFrame {
         );
 
         jMenu1.setText("File");
+
+        jMenu3.setText("Mode");
+
+        jRadioButtonSingleTest.setSelected(true);
+        jRadioButtonSingleTest.setText("Single Test");
+        jMenu3.add(jRadioButtonSingleTest);
+
+        jRadioButtonSeveralTests.setSelected(true);
+        jRadioButtonSeveralTests.setText("Several Tests");
+        jMenu3.add(jRadioButtonSeveralTests);
+
+        jMenuItem1.setText("Generator Config");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu3.add(jMenuItem1);
+
+        jMenu1.add(jMenu3);
+
         jMenuBar1.add(jMenu1);
 
         jMenu2.setText("Edit");
@@ -370,13 +405,20 @@ public class MainWindow extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+
     private void jButtonRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRunActionPerformed
+        int numRuns = 1;
+        if (jRadioButtonSeveralTests.isSelected()) {
+            numRuns = 100;
+        }
 
         if (jButtonRun.getText().equals("Run")) {
-            for (int i = 0; i < 1; i++) {
-                System.out.println("Test " + i);
-                Generator gene = new Generator();
-                gene.generate(16, 20, 500, false, false);
+            for (int i = 0; i < numRuns; i++) {
+
+                //if (jRadioButtonSeveralTests.isSelected()) {
+                    Generator gene = new Generator();
+                    gene.generate(genSizeMotif, genNumSeqs, genSeqSize, genNoise, genLowCons);
+                //}
 
                 jButtonSaveToFile.setVisible(false);
 
@@ -411,9 +453,12 @@ public class MainWindow extends javax.swing.JFrame {
 
                 Population.getInstance().setThresholdComparison((double) jSpinnerComparisonThreshold.getValue());
 
-                t = new Thread(g);
-                t.start();
-                //g.run();
+                if (jRadioButtonSeveralTests.isSelected()) {
+                    g.run();
+                } else {
+                    t = new Thread(g);
+                    t.start();
+                }
 
                 jButtonRun.setText("Stop");
                 /*String t = jTextFieldCompareFile.getText().substring(jTextFieldCompareFile.getText().indexOf(";") + 1);
@@ -427,6 +472,9 @@ public class MainWindow extends javax.swing.JFrame {
                  break;
                  }*/
 
+            }
+            if (jRadioButtonSeveralTests.isSelected()) {
+                jButtonRun.setText("Run");
             }
             try {
                 File file = new File("results.txt");
@@ -533,6 +581,10 @@ public class MainWindow extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jButtonCompareFileActionPerformed
 
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        GeneratorConfig generatorConfig = new GeneratorConfig(this);
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
     public void attGeneration(ArrayList<Individual> list) {
         DefaultListModel listModel = new DefaultListModel();
         list.stream().forEach((ind) -> {
@@ -597,6 +649,47 @@ public class MainWindow extends javax.swing.JFrame {
         });
     }
 
+    public int getGenSizeMotif() {
+        return genSizeMotif;
+    }
+
+    public void setGenSizeMotif(int genSizeMotif) {
+        this.genSizeMotif = genSizeMotif;
+    }
+
+    public int getGenNumSeqs() {
+        return genNumSeqs;
+    }
+
+    public void setGenNumSeqs(int genNumSeqs) {
+        this.genNumSeqs = genNumSeqs;
+    }
+
+    public int getGenSeqSize() {
+        return genSeqSize;
+    }
+
+    public void setGenSeqSize(int genSeqSize) {
+        this.genSeqSize = genSeqSize;
+    }
+
+    public boolean isGenNoise() {
+        return genNoise;
+    }
+
+    public void setGenNoise(boolean genNoise) {
+        this.genNoise = genNoise;
+    }
+
+    public boolean isGenLowCons() {
+        return genLowCons;
+    }
+
+    public void setGenLowCons(boolean genLowCons) {
+        this.genLowCons = genLowCons;
+    }
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonCompareFile;
     private javax.swing.JButton jButtonFastaFile;
@@ -624,8 +717,12 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JList jList1;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JRadioButtonMenuItem jRadioButtonSeveralTests;
+    private javax.swing.JRadioButtonMenuItem jRadioButtonSingleTest;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSpinner jSpinnerComparisonThreshold;
     private javax.swing.JSpinner jSpinnerGenerations;
