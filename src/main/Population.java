@@ -156,6 +156,9 @@ public class Population {
         IntStream.range(0, individuals.size()).parallel().forEach(i -> {
             findInAllSequences(sequences, individuals.get(i), false);
         });
+        /*for(int i =0;i< individuals.size();i++){
+            findInAllSequences(sequences, individuals.get(i), false);
+        }*/
         this.sort();
     }
 

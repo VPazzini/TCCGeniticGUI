@@ -60,7 +60,7 @@ public class Genetic implements Runnable {
                 sequences.add(new Sequence(seqName, tempSequence));
             }
             out.close();
-            
+
             population.setNumSequences(sequences.size());
 
         } catch (Exception e) {
@@ -169,24 +169,25 @@ public class Genetic implements Runnable {
         // Threshold value that determines how much of a new Individual can be
         // equal to another individual in the population, using it to increase
         // diversity
-        double threshold = 0.9;
+        //double threshold = 0.9;
         //double t1 = System.currentTimeMillis();
         // Main loop
         Individual best = null;
         int shiftCount = 0;
         for (gen = 0; gen < maxGens; gen++) {
 
+            //long t = System.currentTimeMillis();
             population.calculateFitness(sequences);
-
-            population.cleanDuplicatesWaterman();
-            population.cleanDuplicates();
-            population.completePopulation(this.size, this.motifSize);
 
             window.attGeneration(population.getPopulation());
 
             if (gen == maxGens - 1 || shiftCount >= maxGens * 0.20) {
                 break;
             }
+
+            population.cleanDuplicatesWaterman();
+            population.cleanDuplicates();
+            population.completePopulation(this.size, this.motifSize);
 
             ArrayList<Individual> newPopulation = new ArrayList<>();
             int spaceUsed = 0;
@@ -220,23 +221,23 @@ public class Genetic implements Runnable {
 
                 Individual newInd1, newInd2, newInd3;
                 Individual temp1 = null, temp2 = null;
-                do {
-                    if (selectionMethod == 1 || selectionMethod == 0) {
-                        temp1 = select.randomSelection();
-                        temp2 = select.randomSelection();
-                    } else if (selectionMethod == 2) {
-                        temp1 = select.roulletSelection();
-                        temp2 = select.roulletSelection();
-                    }
+                //do {
+                if (selectionMethod == 1 || selectionMethod == 0) {
+                    temp1 = select.randomSelection();
+                    temp2 = select.randomSelection();
+                } else if (selectionMethod == 2) {
+                    temp1 = select.roulletSelection();
+                    temp2 = select.roulletSelection();
+                }
 
-                    newInd1 = crossOver.onePointCO(temp1, temp2);
-                    newInd2 = crossOver.onePointCO(temp2, temp1);
-                    newInd3 = crossOver.bestOfEach(temp1, temp2);
-                } while (population.presentInPopulation(newInd1, newPopulation) > threshold
-                        && population.presentInPopulation(newInd2,
-                                newPopulation) > threshold
-                        && population.presentInPopulation(newInd3,
-                                newPopulation) > threshold);
+                newInd1 = crossOver.onePointCO(temp1, temp2);
+                newInd2 = crossOver.onePointCO(temp2, temp1);
+                newInd3 = crossOver.bestOfEach(temp1, temp2);
+                /*} while (population.presentInPopulation(newInd1, newPopulation) > threshold
+                 && population.presentInPopulation(newInd2,
+                 newPopulation) > threshold
+                 && population.presentInPopulation(newInd3,
+                 newPopulation) > threshold);*/
 
                 newPopulation.add(newInd1);
                 newPopulation.add(newInd2);
@@ -246,7 +247,7 @@ public class Genetic implements Runnable {
 
             population.setPopulation((ArrayList<Individual>) newPopulation
                     .clone());
-
+            //System.out.println(System.currentTimeMillis() - t);
         }
 
         population.cleanDuplicatesWaterman();
@@ -257,10 +258,17 @@ public class Genetic implements Runnable {
         window.finished();
 
         //val.compare(population.getPopulation().get(0), new File("D:\\workspace\\TCCGeneticGUI\\motif.fasta"));
-        if (pathToCompareFile!=null && !pathToCompareFile.equals("")) {
+        if (pathToCompareFile != null && !pathToCompareFile.equals("")) {
             ValidateResult val = new ValidateResult();
-            val.compareOne(population.getPopulation().get(0), new File(pathToCompareFile));
-            //val.compareAll(population.getPopulation(), new File(pathToCompareFile));
+            //val.compareOne(population.getPopulation().get(0), new File(pathToCompareFile));
+            ArrayList<Individual> te = new ArrayList<>();
+            if(population.size() >= 5){
+                te.addAll(population.getPopulation().subList(0, 5));
+            }else{
+                te.addAll(population.getPopulation());
+            }
+                
+            val.compareAll(te, new File(pathToCompareFile));
         }
 
     }

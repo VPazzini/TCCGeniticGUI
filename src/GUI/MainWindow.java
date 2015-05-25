@@ -29,9 +29,11 @@ public class MainWindow extends javax.swing.JFrame {
     private int genSizeMotif = 16;
     private int genNumSeqs = 20;
     private int genSeqSize = 500;
+    private int genNumTests = 100;
     private boolean genNoise = false;
     private boolean genLowCons = false;
-
+    private File folder;
+    
     public MainWindow() {
         initComponents();
         setLocationRelativeTo(null);
@@ -64,9 +66,12 @@ public class MainWindow extends javax.swing.JFrame {
         jList1.addMouseListener(mouseListener);
 
         ButtonGroup group = new ButtonGroup();
-        group.add(jRadioButtonSeveralTests);
-        group.add(jRadioButtonSingleTest);
 
+        group.add(jRadioButtonSingleTest);
+        group.add(jRadioButtonSeveralTests);
+        group.add(jRadioButtonCompareCluster);
+        
+        folder = new File("D:\\wekatestes");
     }
 
     @SuppressWarnings("unchecked")
@@ -112,6 +117,7 @@ public class MainWindow extends javax.swing.JFrame {
         jMenu3 = new javax.swing.JMenu();
         jRadioButtonSingleTest = new javax.swing.JRadioButtonMenuItem();
         jRadioButtonSeveralTests = new javax.swing.JRadioButtonMenuItem();
+        jRadioButtonCompareCluster = new javax.swing.JRadioButtonMenuItem();
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
 
@@ -265,15 +271,11 @@ public class MainWindow extends javax.swing.JFrame {
                                     .addComponent(jCheckBoxReverseSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jTextFieldMotifFilePath)
-                                    .addComponent(jTextFieldFilePath, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE))
-                                .addGap(6, 6, 6))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jTextFieldCompareFile)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                            .addComponent(jScrollPane2)
+                            .addComponent(jTextFieldMotifFilePath, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE)
+                            .addComponent(jTextFieldFilePath, javax.swing.GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE)
+                            .addComponent(jTextFieldCompareFile, javax.swing.GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -374,6 +376,10 @@ public class MainWindow extends javax.swing.JFrame {
         jRadioButtonSeveralTests.setText("Several Tests");
         jMenu3.add(jRadioButtonSeveralTests);
 
+        jRadioButtonCompareCluster.setSelected(true);
+        jRadioButtonCompareCluster.setText("Compare Cluster Output");
+        jMenu3.add(jRadioButtonCompareCluster);
+
         jMenuItem1.setText("Generator Config");
         jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -408,17 +414,20 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void jButtonRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRunActionPerformed
         int numRuns = 1;
-        if (jRadioButtonSeveralTests.isSelected()) {
-            numRuns = 100;
+        if (jRadioButtonSeveralTests.isSelected() || jRadioButtonCompareCluster.isSelected()) {
+            numRuns = genNumTests;
         }
 
         if (jButtonRun.getText().equals("Run")) {
             for (int i = 0; i < numRuns; i++) {
-
-                //if (jRadioButtonSeveralTests.isSelected()) {
+                
+                int index = 0;
+                if (!jRadioButtonCompareCluster.isSelected()) {
                     Generator gene = new Generator();
                     gene.generate(genSizeMotif, genNumSeqs, genSeqSize, genNoise, genLowCons);
-                //}
+                }else{
+                    index = i;
+                }
 
                 jButtonSaveToFile.setVisible(false);
 
@@ -432,17 +441,15 @@ public class MainWindow extends javax.swing.JFrame {
                 /*for (String s : jTextFieldFilePath.getText().split(";")) {
                  g.readFile(s);
                  }*/
-                g.readFile(jTextFieldFilePath.getText().split(";")[0]);
+                g.readFile(jTextFieldFilePath.getText().split(";")[index]);
 
                 g.setUp((int) jSpinnerGenerations.getValue(), (int) jSpinnerPopulationSize.getValue(),
                         (int) jSpinnerMotifSize.getValue(), (int) jComboBoxPopulationMethod.getSelectedIndex(),
-                        jTextFieldMotifFilePath.getText().split(";")[0],
+                        jTextFieldMotifFilePath.getText().split(";")[index],
                         (double) jSpinnerSurvivors.getValue(), (int) jComboBoxSelectionMethod.getSelectedIndex(),
-                        this, jTextFieldCompareFile.getText().split(";")[0]);
+                        this, jTextFieldCompareFile.getText().split(";")[index]);
 
-                /*System.out.println(jTextFieldFilePath.getText().split(";")[0] + "\n"+
-                 jTextFieldMotifFilePath.getText().split(";")[0] + "\n" +
-                 jTextFieldCompareFile.getText().split(";")[0]);*/
+
                 this.jLabelSequences.setText(g.getSequences().size() + "");
                 float size = 0;
                 for (Sequence s : g.getSequences()) {
@@ -453,7 +460,7 @@ public class MainWindow extends javax.swing.JFrame {
 
                 Population.getInstance().setThresholdComparison((double) jSpinnerComparisonThreshold.getValue());
 
-                if (jRadioButtonSeveralTests.isSelected()) {
+                if (jRadioButtonSeveralTests.isSelected() || jRadioButtonCompareCluster.isSelected()) {
                     g.run();
                 } else {
                     t = new Thread(g);
@@ -461,16 +468,6 @@ public class MainWindow extends javax.swing.JFrame {
                 }
 
                 jButtonRun.setText("Stop");
-                /*String t = jTextFieldCompareFile.getText().substring(jTextFieldCompareFile.getText().indexOf(";") + 1);
-                 this.jTextFieldCompareFile.setText(t);
-                 t = jTextFieldFilePath.getText().substring(jTextFieldFilePath.getText().indexOf(";") + 1);
-                 this.jTextFieldFilePath.setText(t);
-                 t = jTextFieldMotifFilePath.getText().substring(jTextFieldMotifFilePath.getText().indexOf(";") + 1);
-                 this.jTextFieldMotifFilePath.setText(t);
-
-                 if (t.length() < 2) {
-                 break;
-                 }*/
 
             }
             if (jRadioButtonSeveralTests.isSelected()) {
@@ -497,7 +494,7 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void jButtonFastaFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonFastaFileActionPerformed
 
-        JFileChooser fileChooser = new JFileChooser((new File("")).getAbsoluteFile() + "/input");
+        JFileChooser fileChooser = new JFileChooser((folder).getAbsoluteFile());
         fileChooser.setMultiSelectionEnabled(true);
         if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             String s = "";
@@ -515,7 +512,7 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jSpinnerComparisonThresholdStateChanged
 
     private void jButtonMotifFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonMotifFileActionPerformed
-        JFileChooser fileChooser = new JFileChooser((new File("")).getAbsoluteFile());
+        JFileChooser fileChooser = new JFileChooser((folder).getAbsoluteFile());
 
         fileChooser.setMultiSelectionEnabled(true);
         if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
@@ -568,7 +565,7 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jCheckBoxOneOcurrenceActionPerformed
 
     private void jButtonCompareFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCompareFileActionPerformed
-        JFileChooser fileChooser = new JFileChooser((new File("")).getAbsoluteFile());
+        JFileChooser fileChooser = new JFileChooser((folder).getAbsoluteFile());
 
         fileChooser.setMultiSelectionEnabled(true);
         if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
@@ -689,6 +686,14 @@ public class MainWindow extends javax.swing.JFrame {
         this.genLowCons = genLowCons;
     }
 
+    public int getGenNumTests() {
+        return genNumTests;
+    }
+
+    public void setGenNumTests(int genNumTests) {
+        this.genNumTests = genNumTests;
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonCompareFile;
@@ -721,6 +726,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JRadioButtonMenuItem jRadioButtonCompareCluster;
     private javax.swing.JRadioButtonMenuItem jRadioButtonSeveralTests;
     private javax.swing.JRadioButtonMenuItem jRadioButtonSingleTest;
     private javax.swing.JScrollPane jScrollPane2;

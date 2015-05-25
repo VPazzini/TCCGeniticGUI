@@ -16,7 +16,7 @@ public class ValidateResult {
     public void compareAll(ArrayList<Individual> list, File f) {
         BufferedWriter output = null;
 
-        float[] max = {-1, -1, -1};
+        float[] max = {0, 0, 0};
         float[] r;
         for (Individual ind : list) {
             if (ind.getFitness() > 1) {
